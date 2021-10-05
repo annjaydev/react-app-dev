@@ -1,0 +1,35 @@
+.appointments {
+  padding: 24px;
+
+  &__header {
+    display: grid;
+    grid-template-columns: 25% 25% 18% 21% 11%;
+    width: 100%;
+    padding: 24px 0 15px;
+
+    background-color: #C4C4C4;
+  }
+
+  &__header-item {
+    text-align: center;
+  }
+
+  &__body {
+    border: 1px solid #000000;
+    background-color: #ffffff;
+  }
+
+  &__body-row {
+    display: grid;
+    grid-template-columns: 25% 25% 18% 21% 11%;
+  }
+
+  &__row-item {
+    padding: 20px 8px;
+    text-align: center;
+  }
+
+  &__row-item:not(:last-child) {
+    border-right: 1px solid #000000;
+  }
+}

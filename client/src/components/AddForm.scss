@@ -1,0 +1,59 @@
+.add-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  padding: 24px;
+  margin-top: 10px;
+
+  box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.25);
+
+  &__fields {
+    display: flex;
+    justify-content: space-between;
+    width: 86%;
+  }
+
+  &__control {
+    width: 24%;
+  }
+
+  &__control:not(:last-child) {
+    margin-right: 12px;
+  }
+
+  &__field {
+    height: 45px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  .MuiInputBase-input {
+    height: 45px;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff;
+    border: none;
+    font: 300 18px 'Roboto';
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+  }
+
+  .MuiInput-underline::before,
+  .MuiInput-underline::after{
+    border-bottom: none;
+  }
+
+  &__submit-btn {
+    height: 45px;
+    
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    font: 300 18px 'Roboto';
+    line-height: 21px;
+    cursor: pointer;
+  }
+}
