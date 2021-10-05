@@ -27,9 +27,17 @@
   &__row-item {
     padding: 20px 8px;
     text-align: center;
+    border-bottom: none;
+    border-top: none;
   }
 
   &__row-item:not(:last-child) {
     border-right: 1px solid #000000;
+  }
+
+  &__row-item:last-child {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
 }

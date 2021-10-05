@@ -1,11 +1,10 @@
-const { Schema, model, Types } = require('mongoose');
+const { Schema, model} = require('mongoose');
 
 const appointmentSchema = new Schema({
   fullName: {type: String, required: true},
   doctor: {type: String, required: true},
-  data: {type: Date, required: true},
-  text: {type: String, required: true},
-  user: {type: Types.ObjectId, ref: 'users'}
+  date: {type: Date, required: true},
+  complains: {type: String, required: true}
 });
 
 const Appointment = model('appointments', appointmentSchema);

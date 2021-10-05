@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const apiRoutes = require('./routes/routes');
-const config = require('config');
 
 const app = express();
 const mongoUri = process.env.MONGO_URI;

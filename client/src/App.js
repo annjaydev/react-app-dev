@@ -23,7 +23,9 @@ export const App = () => {
   return (
     <div className='app__container'>
       <Router>
-        {routes}
+        {
+          routes
+        }
       </Router>
     </div>
   );
