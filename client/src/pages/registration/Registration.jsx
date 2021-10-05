@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Header } from '../components/Header';
+import { Header } from '../../components/header/Header';
 import DomainOutlined from '@material-ui/icons/DomainOutlined';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import axios from 'axios';

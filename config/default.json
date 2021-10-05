@@ -1,5 +1,0 @@
-{
-  "port": 8000,
-  "secret": "some_secret_key",
-  "mongoUri": "mongodb+srv://main-user:qwerty123@cluster.5cvcp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-}

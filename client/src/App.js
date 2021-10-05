@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { useRoutes } from './routes';
-import './App.scss';
-import './AuthPages.scss';
+import { useRoutes } from './routes/routes';
+import './index.css';
 
 export const App = () => {
 

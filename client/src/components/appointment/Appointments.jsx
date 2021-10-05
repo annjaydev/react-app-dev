@@ -1,5 +1,5 @@
 import React from 'react';
-import './Appointments.scss';
+import './index.scss';
 
 export const Appointments = () => {
   return (

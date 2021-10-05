@@ -1,16 +1,18 @@
 import React from 'react';
-import { TextField , createTheme, ThemeProvider } from '@material-ui/core';
-import { ruRU } from '@material-ui/core/locale';
-import './AddForm.scss';
+import { TextField } from '@material-ui/core';
+import './index.scss';
 
-const theme = createTheme({}, ruRU);
+export const AddForm = ({onSubmit}) => {
 
-export const AddForm = () => {
-
-  //state is here
+  const doctors = [
+    {id: '1q1', name: 'Грызлов Борис Вячеславович'},
+    {id: '1q2', name: 'Азаров Дмитрий Игоревич'},
+    {id: '1q3', name: 'Аксенов Сергей Валерьевич'},
+    {id: '1q4', name: 'Володин Вячеслав Викторович'}
+  ];
 
   return (
-    <form className='add-form'>
+    <form className='add-form' onSubmit={(e) => onSubmit(e)}>
       <div className='add-form__fields'>
         <div className='add-form__control'>
           <label>Имя:</label>
@@ -23,23 +25,25 @@ export const AddForm = () => {
             style={{ width: '100%', backgroundColor: '#ffffff' }}
           >
             <option selected disabled hidden value=''></option>
-            <option value='Грызлов Борис Вячеславович'>Грызлов Борис Вячеславович</option>
-            <option value='Азаров Дмитрий Игоревич'>Азаров Дмитрий Игоревич</option>
-            <option value='Аксенов Сергей Валерьевич'>Аксенов Сергей Валерьевич</option>
-            <option value='Володин Вячеслав Викторович'>Володин Вячеслав Викторович</option>
+            {doctors.map(doctor => {
+              return <option key={doctor.id} value={doctor.name}>{doctor.name}</option>
+            })};
           </select>
         </div>
         <div className='add-form__control'>
           <label>Дата:</label>
-          <ThemeProvider theme={theme}>
+
             <TextField
               className='add-form__field'
               type='date'
               InputLabelProps={{
                 shrink: true,
               }}
+              InputProps={{
+                disableUnderline: true
+              }}
             />
-          </ThemeProvider>
+
         </div>
         <div className='add-form__control'>
           <label>Жалобы:</label>

@@ -1,6 +1,6 @@
 import React from 'react';
 import HealingOutlined from '@material-ui/icons/HealingOutlined';
-import './Header.scss';
+import './index.scss';
 
 export const Header = ({ title, logout, token }) => {
   return (
