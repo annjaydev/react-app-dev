@@ -22,11 +22,7 @@ export const AddForm = ({ sendData }) => {
       }
     }
 
-    if (allFieldsFilled) {
-      setButtonDisable(false);
-    } else {
-      setButtonDisable(true)
-    }
+    setButtonDisable(!allFieldsFilled);
   }, [formData]);
 
   const changeHandler = (e) => {
@@ -54,6 +50,14 @@ export const AddForm = ({ sendData }) => {
       complains: ''
     });
   }
+
+  const getDate = (date) => {
+    return date ? `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}` : ''
+  };
+
+  const minDate = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(minDate.getDate() + 14);
 
   return (
     <form className='add-form' onSubmit={(e) => onSubmitForm(e)}>
@@ -97,6 +101,10 @@ export const AddForm = ({ sendData }) => {
             }}
             InputProps={{
               disableUnderline: true
+            }}
+            inputProps={{
+              min: getDate(minDate),
+              max: getDate(maxDate)
             }}
             onChange={(e) => changeHandler(e)}
           />

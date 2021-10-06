@@ -8,6 +8,15 @@ const Appointment = require('../models/Appointment');
 
 const router = new Router();
 
+const appointmentFields = [
+  {key: 'fullName', eMessage: 'Поле не заполнено'},
+  {key: 'doctor', eMessage: 'Поле не заполнено'},
+  {key: 'date', eMessage: 'Поле не заполнено'},
+  {key: 'date', eMessage: 'Неверный формат'},
+  {key: 'complains', eMessage: 'Поле не заполнено'},
+  {key: 'id', eMessage: 'Поле не заполнено'}
+]
+
 const generateToken = (id) => {
   const payload = {
     id
@@ -117,12 +126,13 @@ router.post(
 router.post(
   '/addAppointment',
   [
-    check('fullName', 'Поле имени не заполнено').notEmpty(),
-    check('doctor', 'Поле выбора врача не заполнено').notEmpty(),
-    check('date', 'Поле даты не заполнено').notEmpty(),
-    check('date', 'Неверный формат даты').isDate(),
-    check('complains', 'Поле жалоб не заполнено').notEmpty(),
-    check('id', 'Не передано id пользователя').notEmpty(),
+    appointmentFields.map(field => {
+      if (field.eMessage === 'Неверный формат') {
+        return check(field.key, field.eMessage).isDate();
+      }
+
+      return check(field.key, field.eMessage).notEmpty();
+    })
   ],
   async (req, res) => {
     const errors = validationResult(req);

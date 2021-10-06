@@ -41,7 +41,7 @@ export const Login = ({ onLogin }) => {
       setWarnText('');
       setLoading(true);
 
-      await axios.post('http://localhost:8000/login', body)
+      await axios.post(`http://${process.env.REACT_APP_BASE_URL}/login`, body)
         .then(result => {
           if (result.data.error) {
             setWarnText(result.data.error);
@@ -61,9 +61,6 @@ export const Login = ({ onLogin }) => {
         setWarnText('Заполните поле пароля');
       }
     }
-
-    const result = await axios.post('http://localhost:8000/login', body);
-    console.log(result.data.message);
   }
 
   const sendFormData = (e) => {

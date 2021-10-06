@@ -71,7 +71,7 @@ export const Registration = ({ onRegister }) => {
         setWarnText('Пароли не совпадают');
       } else {
         setLoading(true);
-        await axios.post('http://localhost:8000/registration', body)
+        await axios.post(`http://${process.env.REACT_APP_BASE_URL}/registration`, body)
           .then(result => {
             if (result.data.error) {
               setWarnText(result.data.error);
