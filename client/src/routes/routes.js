@@ -1,18 +1,18 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { Registration } from './pages/Registration';
-import { Login } from './pages/Login';
-import { Main } from './pages/Main';
+import { Registration } from '../pages/registration/Registration';
+import { Login } from '../pages/login/Login';
+import { Main } from '../pages/main/Main';
 
-export const useRoutes = (token, id, authoritateUser, logout) => {
+export const useRoutes = (token, userId, authoritateUser, logout) => {
 
-  const isAuthoritated = !!token;
+  const isAuthoritated = true;
 
   if (isAuthoritated) {
     return (
       <Switch>
         <Route path='/main' exact>
-          <Main id={id} token={token} logout={logout}/>
+          <Main id={userId} token={token} logout={logout}/>
         </Route>
         <Redirect to='/main' />
       </Switch>

@@ -1,11 +1,21 @@
 const Router = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const { check, validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 const User = require('../models/User');
+const Appointment = require('../models/Appointment');
 
 const router = new Router();
+
+const appointmentFields = [
+  {key: 'fullName', eMessage: 'Поле не заполнено'},
+  {key: 'doctor', eMessage: 'Поле не заполнено'},
+  {key: 'date', eMessage: 'Поле не заполнено'},
+  {key: 'date', eMessage: 'Неверный формат'},
+  {key: 'complains', eMessage: 'Поле не заполнено'},
+  {key: 'id', eMessage: 'Поле не заполнено'}
+]
 
 const generateToken = (id) => {
   const payload = {
@@ -14,7 +24,7 @@ const generateToken = (id) => {
 
   return jwt.sign(
     payload,
-    config.get('secret'),
+    process.env.SECRET_KEY,
     { expiresIn: '1h' }
   );
 }
@@ -55,16 +65,17 @@ router.post(
 
       const token = generateToken(user._id);
 
-      return res.status(201).json({ 
-        token, 
-        id: user._id, 
-        message: 'Пользователь зарегистрирован' 
+      return res.status(201).json({
+        token,
+        id: user._id,
+        message: 'Пользователь зарегистрирован'
       });
-      
+
     } catch (e) {
-      res.json({error: 'Что-то пошло не так, поробуйте снова'});
+      res.json({ error: 'Что-то пошло не так, поробуйте снова' });
     }
-  });
+  }
+);
 
 router.post(
   '/login',
@@ -95,8 +106,8 @@ router.post(
 
       if (!isMatchPassword) {
         return res.json({ error: 'Неверно введен логин или пароль' });
-      } 
-      
+      }
+
       const token = generateToken(userFounded._id);
 
       res.json({
@@ -109,6 +120,64 @@ router.post(
       console.log(e);
       res.status(400).json({ message: 'Ошибка авторизации' });
     }
-  });
+  }
+);
+
+router.post(
+  '/addAppointment',
+  [
+    appointmentFields.map(field => {
+      if (field.eMessage === 'Неверный формат') {
+        return check(field.key, field.eMessage).isDate();
+      }
+
+      return check(field.key, field.eMessage).notEmpty();
+    })
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        message: 'Заполнены не все поля для создания нового приема'
+      });
+    }
+
+    const { fullName, doctor, date, complains, id } = req.body;
+
+    const userFounded = await User.findOne({ id });
+
+    const newAppointment = new Appointment({
+      _id: new mongoose.Types.ObjectId(),
+      fullName,
+      doctor,
+      date,
+      complains
+    });
+
+    await newAppointment.save();
+
+    userFounded.appointments.push(newAppointment._id);
+    await userFounded.save();
+
+    const result = await User.findOne({id}).populate('appointments');
+    res.send(result.appointments);
+  }
+);
+
+router.get(
+  '/getAllAppointments',
+  async (req, res) => {
+    const id = req.query.id;
+
+    if (!id) {
+      res.status(400).send('Что-то пошло не так.')
+    }
+
+    const result = await User.findOne({id}).populate('appointments');
+    res.send(result.appointments);
+  }
+);
 
 module.exports = router;
