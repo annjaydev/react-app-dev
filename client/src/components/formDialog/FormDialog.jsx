@@ -5,7 +5,7 @@ import './index.scss';
 
 export const FormDialog = () => {
 
-  const sendData = ({ fullName, doctor, date, complains }) => {
+  const showData = ({ fullName, doctor, date, complains }) => {
     console.log(fullName);
     console.log(doctor);
     console.log(date);
@@ -13,10 +13,10 @@ export const FormDialog = () => {
   }
 
   return (
-    <Dialog open={true} className='form-modal'>
+    <Dialog open={false} className='form-modal'>
       <DialogTitle>Изменить прием</DialogTitle>
       <DialogContent>
-        <AddForm sendData={sendData}/>
+        <AddForm  id='add-form' sendData={showData}/>
       </DialogContent>
       <DialogActions>
         <button>Close</button>

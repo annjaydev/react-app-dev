@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import './index.scss';
 
-export const AddForm = ({ sendData }) => {
+export const AddForm = ({ sendData, id }) => {
 
   const [buttonDisable, setButtonDisable] = useState(true);
 
@@ -60,7 +60,7 @@ export const AddForm = ({ sendData }) => {
   maxDate.setDate(minDate.getDate() + 14);
 
   return (
-    <form id='add-form' className='add-form' onSubmit={(e) => onSubmitForm(e)}>
+    <form id={id} className='add-form' onSubmit={(e) => onSubmitForm(e)}>
       <div className='add-form__fields'>
         <div className='add-form__control'>
           <label className='add-form__label'>Имя:</label>
