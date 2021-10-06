@@ -1,0 +1,45 @@
+.form-modal {
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: flex-end;
+
+  // padding: 24px;
+  // margin-top: 10px;
+
+  .add-form__label {
+    margin-bottom: 10px;
+  }
+
+  .add-form {
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .add-form__fields {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .add-form__control {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .add-form__field {
+    height: 40px;
+  }
+
+  .add-form__submit-btn {
+    display: none;
+  }
+
+  .MuiDialog-paperWidthSm {
+    max-width: 650px;
+    width: 100%;
+  }
+
+  .MuiTypography-h6 {
+    font-size: 36px;
+  }
+}
