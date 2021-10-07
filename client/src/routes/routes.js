@@ -6,7 +6,7 @@ import { Main } from '../pages/main/Main';
 
 export const useRoutes = (token, userId, authoritateUser, logout) => {
 
-  const isAuthoritated = true;
+  const isAuthoritated = !!token;
 
   if (isAuthoritated) {
     return (

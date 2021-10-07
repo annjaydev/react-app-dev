@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from '../../components/header/Header';
 import { AddForm } from '../../components/addForm/AddForm';
 import { Appointments } from '../../components/appointment/Appointments';
+import { FormDialog } from '../../components/formDialog/FormDialog';
 import axios from 'axios';
 
 export const Main = ({ id, token, logout }) => {
@@ -14,10 +15,10 @@ export const Main = ({ id, token, logout }) => {
 
   const createAppointment = async ({ fullName, doctor, date, complains }) => {
     const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/addAppointment`, {
-      fullName, 
-      doctor, 
-      date, 
-      complains, 
+      fullName,
+      doctor,
+      date,
+      complains,
       id
     });
 
@@ -37,6 +38,7 @@ export const Main = ({ id, token, logout }) => {
           <Appointments appointments={appointments} /> :
           'Пользователь пока что не создал ни одного приема'
       }
+      <FormDialog />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import './index.scss';
 
-export const AddForm = ({ sendData }) => {
+export const AddForm = ({ sendData, id }) => {
 
   const [buttonDisable, setButtonDisable] = useState(true);
 
@@ -60,10 +60,10 @@ export const AddForm = ({ sendData }) => {
   maxDate.setDate(minDate.getDate() + 14);
 
   return (
-    <form className='add-form' onSubmit={(e) => onSubmitForm(e)}>
+    <form id={id} className='add-form' onSubmit={(e) => onSubmitForm(e)}>
       <div className='add-form__fields'>
         <div className='add-form__control'>
-          <label>Имя:</label>
+          <label className='add-form__label'>Имя:</label>
           <input
             className='add-form__field'
             type='text'
@@ -74,7 +74,7 @@ export const AddForm = ({ sendData }) => {
         </div>
 
         <div className='add-form__control'>
-          <label>Врач:</label>
+          <label className='add-form__label'>Врач:</label>
           <select
             className='add-form__field'
             style={{ width: '100%', backgroundColor: '#ffffff' }}
@@ -90,7 +90,7 @@ export const AddForm = ({ sendData }) => {
         </div>
 
         <div className='add-form__control'>
-          <label>Дата:</label>
+          <label className='add-form__label'>Дата:</label>
           <TextField
             className='add-form__field'
             type='date'
@@ -111,7 +111,7 @@ export const AddForm = ({ sendData }) => {
 
         </div>
         <div className='add-form__control'>
-          <label>Жалобы:</label>
+          <label className='add-form__label'>Жалобы:</label>
           <input
             className='add-form__field'
             type='text'
