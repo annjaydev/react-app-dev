@@ -3,7 +3,7 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import './index.scss';
 
-export const Appointments = ({ appointments }) => {
+export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpen }) => {
   return (
     <div className='appointments'>
       <div className='appointments__header'>
@@ -25,14 +25,26 @@ export const Appointments = ({ appointments }) => {
                 {appointment.doctor}
               </div>
               <div className='appointments__row-item'>
-                {appointment.date}
+                {appointment.date.slice(0, 10)}
               </div>
               <div className='appointments__row-item'>
                 {appointment.complains}
               </div>
               <div className='appointments__row-item'>
                 <DeleteOutlineIcon />
-                <EditIcon />
+                <EditIcon
+                  onClick={() => {
+                    setCurrentAppointment({
+                      fullName: appointment.fullName,
+                      doctor: appointment.doctor,
+                      date: appointment.date,
+                      complains: appointment.complains
+                    });
+
+                    setDialogOpen(true);
+                  }
+                  }
+                />
               </div>
             </div>
 

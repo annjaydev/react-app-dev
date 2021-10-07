@@ -7,9 +7,16 @@ import axios from 'axios';
 
 export const Main = ({ id, token, logout }) => {
   const [appointments, setAppointments] = useState([]);
+  const [currentAppointment, setCurrentAppointment] = useState({
+    fullName: '',
+    doctor: '',
+    date: '',
+    complains: ''
+  });
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const getAllAppointments = async () => {
-    const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL}/getAllAppointments?id=${id}`);
+  const getAllAppointments = async (id) => {
+    const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/getAllAppointments?id=${id}`);
     setAppointments(result.data);
   }
 
@@ -26,19 +33,40 @@ export const Main = ({ id, token, logout }) => {
   }
 
   useEffect(() => {
-    getAllAppointments();
-  }, []);
+    if (id) {
+      getAllAppointments(id);
+    }
+  }, [id]);
+
+  const noAppointment = {
+    fullName: '',
+    doctor: '',
+    date: '',
+    complains: ''
+  }
 
   return (
     <div>
       <Header title='Приемы' logout={logout} token={token} />
-      <AddForm sendData={createAppointment} />
+      <AddForm
+        sendData={createAppointment}
+        currentData={noAppointment}
+        id='main-add-form'
+      />
       {
         appointments.length > 0 ?
-          <Appointments appointments={appointments} /> :
+          <Appointments
+            appointments={appointments}
+            setCurrentAppointment={setCurrentAppointment}
+            setDialogOpen={setDialogOpen}
+          /> :
           'Пользователь пока что не создал ни одного приема'
       }
-      <FormDialog />
+      <FormDialog
+        open={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        currentData={currentAppointment}
+      />
     </div>
   )
 }
