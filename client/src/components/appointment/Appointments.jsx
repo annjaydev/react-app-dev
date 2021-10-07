@@ -38,7 +38,8 @@ export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpe
                       fullName: appointment.fullName,
                       doctor: appointment.doctor,
                       date: appointment.date,
-                      complains: appointment.complains
+                      complains: appointment.complains,
+                      id: appointment._id
                     });
 
                     setDialogOpen(true);

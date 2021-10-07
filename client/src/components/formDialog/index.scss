@@ -17,10 +17,16 @@
   .add-form__control {
     width: 100%;
     margin-bottom: 20px;
+    margin-right: 0;
   }
 
   .add-form__field {
-    height: 40px;
+    font: 300 18px 'Roboto';
+  }
+
+  .add-form__complains {
+    padding: 20px;
+    height: auto;
   }
 
   .add-form__submit-btn {

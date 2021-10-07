@@ -3,14 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/
 import { AddForm } from '../addForm/AddForm';
 import './index.scss';
 
-export const FormDialog = ({ open, setDialogOpen, currentData }) => {
-
-  const showData = ({ fullName, doctor, date, complains }) => {
-    console.log(fullName);
-    console.log(doctor);
-    console.log(date);
-    console.log(complains);
-  }
+export const FormDialog = ({ open, setDialogOpen, currentData, editAppointment }) => {
 
   return (
     <Dialog open={open} className='form-modal'>
@@ -18,7 +11,7 @@ export const FormDialog = ({ open, setDialogOpen, currentData }) => {
       <DialogContent>
         <AddForm
           id='add-form'
-          sendData={showData}
+          sendData={editAppointment}
           currentData={currentData}
         />
       </DialogContent>

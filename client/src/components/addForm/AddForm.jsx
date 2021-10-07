@@ -113,13 +113,15 @@ export const AddForm = ({ sendData, id, currentData }) => {
         </div>
         <div className='add-form__control'>
           <label className='add-form__label'>Жалобы:</label>
-          <input
-            className='add-form__field'
-            type='text'
+          <textarea 
+            className='add-form__field add-form__complains'
             name='complains'
+            rows='6'
             value={formData.complains}
+            maxLength='198'
             onChange={(e) => changeHandler(e)}
-          />
+          >
+          </textarea>
         </div>
       </div>
 

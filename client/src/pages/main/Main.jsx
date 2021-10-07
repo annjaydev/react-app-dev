@@ -6,13 +6,17 @@ import { FormDialog } from '../../components/formDialog/FormDialog';
 import axios from 'axios';
 
 export const Main = ({ id, token, logout }) => {
-  const [appointments, setAppointments] = useState([]);
-  const [currentAppointment, setCurrentAppointment] = useState({
+
+  const noAppointment = {
     fullName: '',
     doctor: '',
     date: '',
-    complains: ''
-  });
+    complains: '',
+    id:''
+  };
+
+  const [appointments, setAppointments] = useState([]);
+  const [currentAppointment, setCurrentAppointment] = useState(noAppointment);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const getAllAppointments = async (id) => {
@@ -32,18 +36,24 @@ export const Main = ({ id, token, logout }) => {
     setAppointments(result.data);
   }
 
+  const editAppointment = async (parameter) => {
+    const result = await axios.put(`http://${process.env.REACT_APP_BASE_URL}/editAppointment`, {
+      fullName: parameter.fullName,
+      doctor: parameter.doctor,
+      date: parameter.date,
+      complains: parameter.complains,
+      id: currentAppointment.id
+    });
+
+    await getAllAppointments(id);
+    setDialogOpen(false);
+  }
+
   useEffect(() => {
     if (id) {
       getAllAppointments(id);
     }
   }, [id]);
-
-  const noAppointment = {
-    fullName: '',
-    doctor: '',
-    date: '',
-    complains: ''
-  }
 
   return (
     <div>
@@ -66,6 +76,7 @@ export const Main = ({ id, token, logout }) => {
         open={dialogOpen}
         setDialogOpen={setDialogOpen}
         currentData={currentAppointment}
+        editAppointment={editAppointment}
       />
     </div>
   )

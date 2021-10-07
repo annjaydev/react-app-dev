@@ -178,6 +178,25 @@ router.post(
     const result = await User.findOne({_id: id}).populate('appointments');
     res.send(result.appointments);
   }
-);
+);  
+
+router.put('/editAppointment', async (req, res) => {
+  const {fullName, doctor, date, complains, id} = req.body;
+
+  if (!fullName || !doctor || !date || !complains || !id) {
+    res.json({ error: 'Заполните все поля' });
+  }
+
+  let editingAppointment = await Appointment.findOne({_id: id});
+
+  fullName ? editingAppointment.fullName = fullName : editingAppointment.fullName;
+  doctor ? editingAppointment.doctor = doctor : editingAppointment.doctor;
+  date ? editingAppointment.date = date : editingAppointment.date;
+  complains ? editingAppointment.complains = complains : editingAppointment.complains;
+  
+  await editingAppointment.save();
+
+  res.send(editingAppointment);
+});
 
 module.exports = router;

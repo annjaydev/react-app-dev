@@ -29,6 +29,7 @@
     text-align: center;
     border-bottom: none;
     border-top: none;
+    word-wrap: break-word;
   }
 
   &__row-item:not(:last-child) {
