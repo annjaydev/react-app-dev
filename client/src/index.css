@@ -31,6 +31,7 @@ code {
   width: 100%;
   margin: 100px auto;
   background-color: #c5e9ff;
+  overflow: hidden;
 }
 
 .auth-page {

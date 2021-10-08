@@ -94,7 +94,10 @@ export const Main = ({ id, token, logout }) => {
             setDialogOpen={setDialogOpen}
             setWarningOpen={setWarningOpen}
           /> :
-          'Пользователь пока что не создал ни одного приема'
+          <div className='appointments'>
+            <p>Пока что вы не подали заявку на прием ни к одному из наших врачей.</p>
+            <p>Заполните все поля, зарегистрируйте прием, и все ваши данные отразятся на странице ниже.</p>
+          </div>
       }
       <FormDialog
         open={dialogOpen}
