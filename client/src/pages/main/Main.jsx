@@ -11,7 +11,7 @@ export const Main = ({ id, token, logout }) => {
   const noAppointment = {
     fullName: '',
     doctor: '',
-    date: '',
+    date: '', 
     complains: '',
     id: ''
   };
