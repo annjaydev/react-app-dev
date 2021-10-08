@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/
 import { AddForm } from '../addForm/AddForm';
 import './index.scss';
 
-export const FormDialog = ({ open, setDialogOpen, currentData, editAppointment }) => {
+export const FormDialog = ({ open, currentData, cancelAction, confirmAction }) => {
 
   return (
     <Dialog open={open} className='form-modal'>
@@ -11,19 +11,19 @@ export const FormDialog = ({ open, setDialogOpen, currentData, editAppointment }
       <DialogContent>
         <AddForm
           id='add-form'
-          sendData={editAppointment}
+          sendData={confirmAction}
           currentData={currentData}
         />
       </DialogContent>
       <DialogActions>
         <button
-          className='close-dialog-btn button-styled'
-          onClick={() => setDialogOpen(false)}
+          className='btn-border-2 btn-styled'
+          onClick={cancelAction}
         >
           Cancel
         </button>
         <button
-          className='save-dialog-btn button-styled'
+          className='btn-border-2 btn-styled btn-light-blue'
           form='add-form'
           type='submit'
         >
