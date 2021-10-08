@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import './index.scss';
 
-export const AddForm = ({ sendData, id }) => {
+export const AddForm = ({ sendData, id, currentData }) => {
 
   const [buttonDisable, setButtonDisable] = useState(true);
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    doctor: '',
-    date: '',
-    complains: ''
+    fullName: currentData.fullName,
+    doctor: currentData.doctor,
+    date: currentData.date,
+    complains: currentData.complains
   });
 
   useEffect(() => {
@@ -95,7 +95,8 @@ export const AddForm = ({ sendData, id }) => {
             className='add-form__field'
             type='date'
             name='date'
-            value={formData.date}
+            defaultValue={formData.date.slice(0, 10)}
+            value={formData.date.slice(0, 10)}
             InputLabelProps={{
               shrink: true,
             }}
@@ -112,13 +113,15 @@ export const AddForm = ({ sendData, id }) => {
         </div>
         <div className='add-form__control'>
           <label className='add-form__label'>Жалобы:</label>
-          <input
-            className='add-form__field'
-            type='text'
+          <textarea 
+            className='add-form__field add-form__complains'
             name='complains'
+            rows='6'
             value={formData.complains}
+            maxLength='198'
             onChange={(e) => changeHandler(e)}
-          />
+          >
+          </textarea>
         </div>
       </div>
 
