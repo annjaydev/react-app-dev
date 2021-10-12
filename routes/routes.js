@@ -5,7 +5,6 @@ const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
-
 const router = new Router();
 
 const appointmentFields = [
@@ -184,7 +183,7 @@ router.put('/editAppointment', async (req, res) => {
   const {fullName, doctor, date, complains, id} = req.body;
 
   if (!fullName || !doctor || !date || !complains || !id) {
-    res.json({ error: 'Заполните все поля' });
+    res.status(400).json({ error: 'Заполните все поля' });
   }
 
   let editingAppointment = await Appointment.findOne({_id: id});
@@ -197,6 +196,18 @@ router.put('/editAppointment', async (req, res) => {
   await editingAppointment.save();
 
   res.send(editingAppointment);
+});
+
+router.delete('/deleteAppointment', async (req, res) => {
+  const {id} = req.query;
+
+  if (!id) {
+    res.status(400).json({ error: 'Некорректные параметры' });
+  }
+
+  await Appointment.deleteOne({_id: id});
+
+  res.send('Прием отменен')
 });
 
 module.exports = router;

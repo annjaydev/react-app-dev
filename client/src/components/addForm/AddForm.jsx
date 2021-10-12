@@ -41,14 +41,17 @@ export const AddForm = ({ sendData, id, currentData }) => {
 
   const onSubmitForm = (e) => {
     e.preventDefault();
-    sendData(formData);
+    
+    if (!buttonDisable) {
+      sendData(formData);
 
-    setFormData({
-      fullName: '',
-      doctor: '',
-      date: '',
-      complains: ''
-    });
+      setFormData({
+        fullName: '',
+        doctor: '',
+        date: '',
+        complains: ''
+      });
+    }
   }
 
   const getDate = (date) => {
@@ -113,7 +116,7 @@ export const AddForm = ({ sendData, id, currentData }) => {
         </div>
         <div className='add-form__control'>
           <label className='add-form__label'>Жалобы:</label>
-          <textarea 
+          <textarea
             className='add-form__field add-form__complains'
             name='complains'
             rows='6'

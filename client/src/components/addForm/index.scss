@@ -25,11 +25,15 @@
   &__field {
     height: 45px;
     width: 100%;
-    padding: 8px;
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0.2);
+    font: 300 18px "Roboto";
     resize: none;
     overflow: hidden;
+  }
+
+  &__complains {
+    padding: 4px;
   }
 
   .MuiInputBase-input {
@@ -44,19 +48,15 @@
     box-sizing: border-box;
   }
 
-  // .MuiInput-underline::before,
-  // .MuiInput-underline::after{
-  //   border-bottom: none;
-  // }
-
   &__submit-btn {
     height: 45px;
+    margin-bottom: 4px;
     
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     font: 300 18px 'Roboto';
-    line-height: 21px;
+    line-height: 1;
     cursor: pointer;
   }
 }

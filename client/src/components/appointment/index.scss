@@ -7,7 +7,7 @@
     width: 100%;
     padding: 24px 0 15px;
 
-    background-color: #C4C4C4;
+    background-color: #c4c4c4;
   }
 
   &__header-item {
@@ -15,8 +15,11 @@
   }
 
   &__body {
+    max-height: 450px;
+
     border: 1px solid #000000;
     background-color: #ffffff;
+    overflow-y: scroll;
   }
 
   &__body-row {
@@ -30,6 +33,7 @@
     border-bottom: none;
     border-top: none;
     word-wrap: break-word;
+    border-top: none;
   }
 
   &__row-item:not(:last-child) {
@@ -40,5 +44,10 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    background: transparent; 
   }
 }

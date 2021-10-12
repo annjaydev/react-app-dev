@@ -3,7 +3,7 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import './index.scss';
 
-export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpen }) => {
+export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpen, setWarningOpen }) => {
   return (
     <div className='appointments'>
       <div className='appointments__header'>
@@ -13,11 +13,10 @@ export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpe
         <div className='appointments__header-item'>Жалобы</div>
       </div>
 
-      {appointments.map(appointment => {
-        return (
-          <div className='appointments__body' key={appointment._id}>
-
-            <div className='appointments__body-row'>
+      <div className='appointments__body' >
+        {appointments.map(appointment => {
+          return (
+            <div className='appointments__body-row' key={appointment._id}>
               <div className='appointments__row-item'>
                 {appointment.fullName}
               </div>
@@ -31,7 +30,20 @@ export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpe
                 {appointment.complains}
               </div>
               <div className='appointments__row-item'>
-                <DeleteOutlineIcon />
+                <DeleteOutlineIcon 
+                  onClick={() => {
+                    setCurrentAppointment({
+                      fullName: appointment.fullName,
+                      doctor: appointment.doctor,
+                      date: appointment.date,
+                      complains: appointment.complains,
+                      id: appointment._id
+                    });
+
+                    setWarningOpen(true);
+                  }
+                  }
+                />
                 <EditIcon
                   onClick={() => {
                     setCurrentAppointment({
@@ -49,9 +61,9 @@ export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpe
               </div>
             </div>
 
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   );
 }
