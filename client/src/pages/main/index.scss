@@ -1,0 +1,18 @@
+.sort-block {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 20px 24px 0;
+}
+
+.filter-activator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 18px;
+}
+
+.filter-add-btn {
+  cursor: pointer;
+}

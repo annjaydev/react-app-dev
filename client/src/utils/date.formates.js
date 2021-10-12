@@ -1,0 +1,7 @@
+export const getDate = (date) => {
+  return date ? `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}` : ''
+};
+
+export const formatDate = (date) => {
+  return date.slice(0, 10).split('-').reverse().join('.');
+}

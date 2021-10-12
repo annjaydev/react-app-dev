@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
+import { getDate } from '../../utils/date.formates';
 import './index.scss';
 
 export const AddForm = ({ sendData, id, currentData }) => {
@@ -54,10 +55,6 @@ export const AddForm = ({ sendData, id, currentData }) => {
     }
   }
 
-  const getDate = (date) => {
-    return date ? `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}` : ''
-  };
-
   const minDate = new Date();
   const maxDate = new Date();
   maxDate.setDate(minDate.getDate() + 14);
@@ -98,7 +95,7 @@ export const AddForm = ({ sendData, id, currentData }) => {
             className='add-form__field'
             type='date'
             name='date'
-            defaultValue={formData.date.slice(0, 10)}
+            // defaultValue={formData.date.slice(0, 10)}
             value={formData.date.slice(0, 10)}
             InputLabelProps={{
               shrink: true,

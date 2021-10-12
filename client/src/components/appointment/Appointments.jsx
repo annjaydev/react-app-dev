@@ -1,6 +1,7 @@
 import React from 'react';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
+import { formatDate } from '../../utils/date.formates';
 import './index.scss';
 
 export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpen, setWarningOpen }) => {
@@ -24,7 +25,7 @@ export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpe
                 {appointment.doctor}
               </div>
               <div className='appointments__row-item'>
-                {appointment.date.slice(0, 10)}
+                {formatDate(appointment.date)}
               </div>
               <div className='appointments__row-item'>
                 {appointment.complains}

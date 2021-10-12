@@ -1,0 +1,14 @@
+.sort-selector__container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: 18px;
+
+  .sort-selector__field {
+    width: 200px !important;
+  }
+
+  .common-text {
+    margin-right: 8px;
+  }
+}
