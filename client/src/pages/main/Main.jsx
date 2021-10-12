@@ -6,27 +6,17 @@ import { SortSelector } from '../../components/sortSelector/SortSelector';
 import { FormDialog } from '../../components/formDialog/FormDialog';
 import { DeleteWarning } from '../../components/deleteWarning/DeleteWarning';
 import { DateFilter } from '../../components/dateFilter/DateFilter';
-import { sortBy } from 'lodash';
+import { sortByProp } from '../../utils/sort.constant';
+import { filterByDates } from '../../utils/filter.constant';
+import { noAppointment, sortCollection, SortValues, SortDirections } from '../../utils/collections';
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import { Tooltip } from '@material-ui/core';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab'
 import axios from 'axios';
 import './index.scss';
 
 export const Main = ({ id, token, logout }) => {
-
-  const noAppointment = {
-    fullName: '',
-    doctor: '',
-    date: '',
-    complains: '',
-    id: ''
-  };
-
-  const sortCollection = [
-    { id: '1ci1', value: 'Имя' },
-    { id: '1ci2', value: 'Врач' },
-    { id: '1ci3', value: 'Дата' },
-    { id: '1ci4', value: 'Отменить' }
-  ];
 
   const sortDirectionColl = [
     { id: '2ci1', value: 'По возрастанию' },
@@ -50,6 +40,12 @@ export const Main = ({ id, token, logout }) => {
     dateTo: ''
   }]);
 
+  const [openSnack, setOpenSnack] = useState(false);
+  const [snackData, setSnackData] = useState({
+    severety: '',
+    text: ''
+  });
+
   const getAllAppointments = async (id) => {
     const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/getAllAppointments?id=${id}`);
 
@@ -66,6 +62,8 @@ export const Main = ({ id, token, logout }) => {
     });
 
     setAppointments(result.data);
+    showSuccessSnack('Добавлен новый прием')
+
   }
 
   const editAppointment = async (parameter) => {
@@ -79,6 +77,7 @@ export const Main = ({ id, token, logout }) => {
       await getAllAppointments(id).then(res => setAppointments(res));
       setDialogOpen(false);
       setCurrentAppointment(noAppointment);
+      showSuccessSnack('Прием изменен')
     });
   }
 
@@ -90,6 +89,7 @@ export const Main = ({ id, token, logout }) => {
     await getAllAppointments(id).then(res => setAppointments(res));
     setWarningOpen(false);
     setCurrentAppointment(noAppointment);
+    showSuccessSnack('Прием удален');
   }
 
   const cleanWarning = () => {
@@ -102,28 +102,25 @@ export const Main = ({ id, token, logout }) => {
     setCurrentAppointment(noAppointment);
   }
 
-  const sortByProp = (direction, prop) => {
-    let result = null;
-
-    if (direction === 'asc') {
-      result = sortBy(appointments, (item) => item[prop]);
-    } else if (direction === 'desc') {
-      result = sortBy(appointments, (item) => item[prop]).reverse();
-    }
-    
-    setAppointments(result);
-  }
-
-  const filterByDates = () => {
-    return appointmentsCopy.filter(appointment => 
-      appointment.date >= datesPeriod.dateFrom &&
-      appointment.date <= datesPeriod.dateTo
-    );
-  }
-
   const cancelFilter = () => {
     setAppointments(appointmentsCopy);
     setShowFilter(false);
+  }
+
+  const handleClose = () => {
+    setOpenSnack(false);
+    setSnackData({
+      severety: '',
+      text: ''
+    });
+  }
+
+  const showSuccessSnack = (text) => {
+    setSnackData({
+      severety: 'success',
+      text: text
+    })
+    setOpenSnack(true);
   }
 
   useEffect(() => {
@@ -134,7 +131,8 @@ export const Main = ({ id, token, logout }) => {
           setAppointmentsCopy(res);
         });
     }
-  }, []);
+
+  }, [id]);
 
   useEffect(() => {
     if (sortValue && sortValue !== 'Отменить') {
@@ -147,20 +145,26 @@ export const Main = ({ id, token, logout }) => {
   }, [sortValue]);
 
   useEffect(() => {
+    let appointmentsSorted = null;
     if (sortDirection && sortDirection === 'По возрастанию') {
-      if (sortValue === 'Имя') sortByProp('asc', 'fullName');
-      else if (sortValue === 'Врач') sortByProp('asc', 'doctor');
-      else if (sortValue === 'Дата') sortByProp('asc', 'date');
+      if (sortValue === 'Имя') appointmentsSorted = sortByProp(appointments, SortDirections.Asc, SortValues.Name);
+      else if (sortValue === 'Врач') appointmentsSorted = sortByProp(appointments, SortDirections.Asc, SortValues.Doctor);
+      else if (sortValue === 'Дата') appointmentsSorted = sortByProp(appointments, SortDirections.Asc, SortValues.Date);
 
     } else if (sortDirection && sortDirection === 'По убыванию') {
-      if (sortValue === 'Имя') sortByProp('desc', 'fullName');
-      else if (sortValue === 'Врач') sortByProp('desc', 'doctor');
-      else if (sortValue === 'Дата') sortByProp('desc', 'date');
+      if (sortValue === 'Имя') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Name);
+      else if (sortValue === 'Врач') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Doctor);
+      else if (sortValue === 'Дата') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Date);
     }
+
+    if (appointmentsSorted) setAppointments(appointmentsSorted);
   }, [sortDirection, sortValue]);
 
   useEffect(() => {
-    setAppointments(filterByDates());
+    const result = filterByDates(appointmentsCopy, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
+    if (datesPeriod.dateFrom && datesPeriod.dateTo) {
+      setAppointments(result);
+    }
   }, [datesPeriod])
 
   return (
@@ -171,6 +175,8 @@ export const Main = ({ id, token, logout }) => {
         currentData={noAppointment}
         id='main-add-form'
       />
+
+      <div className="class"></div>
 
       <div className='sort-block'>
         <SortSelector
@@ -188,19 +194,21 @@ export const Main = ({ id, token, logout }) => {
           />
         }
 
-        { !showFilter && <div className='filter-activator'>
+        {!showFilter && <div className='filter-activator'>
           <p className='common-text'>Добавить фильтр по дате: </p>
-          <AddBoxIcon
-            className='filter-add-btn'
-            style={{ fontSize: 30 }}
-            onClick={() => setShowFilter(true)}
-          />
+          <Tooltip title='Добавить фильтр'>
+            <AddBoxIcon
+              className='filter-add-btn'
+              style={{ fontSize: 30 }}
+              onClick={() => setShowFilter(true)}
+            />
+          </Tooltip>
         </div>}
       </div>
 
-      { showFilter && 
-        <DateFilter 
-          deleteFilter={cancelFilter} 
+      {showFilter &&
+        <DateFilter
+          deleteFilter={cancelFilter}
           setDatesPeriod={setDatesPeriod}
         />}
 
@@ -231,6 +239,12 @@ export const Main = ({ id, token, logout }) => {
         cancelAction={cleanWarning}
         confirmAction={deleteAppointment}
       />
+
+      <Snackbar open={openSnack} autoHideDuration={3000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={snackData.severety}>
+          {snackData.text}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

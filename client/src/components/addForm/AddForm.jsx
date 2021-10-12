@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { getDate } from '../../utils/date.formates';
+import { doctors } from '../../utils/collections';
 import './index.scss';
 
 export const AddForm = ({ sendData, id, currentData }) => {
@@ -32,13 +33,6 @@ export const AddForm = ({ sendData, id, currentData }) => {
       [e.target.name]: e.target.value
     });
   }
-
-  const doctors = [
-    { id: '1q1', name: 'Грызлов Борис Вячеславович' },
-    { id: '1q2', name: 'Азаров Дмитрий Игоревич' },
-    { id: '1q3', name: 'Аксенов Сергей Валерьевич' },
-    { id: '1q4', name: 'Володин Вячеслав Викторович' }
-  ];
 
   const onSubmitForm = (e) => {
     e.preventDefault();
@@ -95,7 +89,6 @@ export const AddForm = ({ sendData, id, currentData }) => {
             className='add-form__field'
             type='date'
             name='date'
-            // defaultValue={formData.date.slice(0, 10)}
             value={formData.date.slice(0, 10)}
             InputLabelProps={{
               shrink: true,

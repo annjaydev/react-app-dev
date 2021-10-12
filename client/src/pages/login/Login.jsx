@@ -81,6 +81,7 @@ export const Login = ({ onLogin }) => {
 
         <form
           className='auth-page__form'
+          autoComplete='new-password'
           onSubmit={(e) => sendFormData(e)}
         >
           <h3 className='auth-page__title'>Войти в систему</h3>
@@ -115,7 +116,7 @@ export const Login = ({ onLogin }) => {
           />
 
           <button
-            className='auth-page__btn'
+            className='auth-page__btn pointer'
             type='submit'
             disabled={loading}
           >Войти</button>

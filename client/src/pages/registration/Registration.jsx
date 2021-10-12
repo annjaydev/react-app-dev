@@ -111,6 +111,7 @@ export const Registration = ({ onRegister }) => {
 
         <form
           className='auth-page__form'
+          autoComplete='new-password'
           onSubmit={(e) => sendFormData(e)}>
 
           <h3 className='auth-page__title'>Регистрация</h3>
@@ -155,7 +156,7 @@ export const Registration = ({ onRegister }) => {
           />
 
           <button
-            className='auth-page__btn'
+            className='auth-page__btn pointer'
             type='submit'
             disabled={loading}
           >Зарегистрироваться</button>

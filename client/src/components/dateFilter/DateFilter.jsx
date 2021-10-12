@@ -26,7 +26,6 @@ export const DateFilter = ({deleteFilter, setDatesPeriod}) => {
           className='date-filter__field base-input'
           type='date'
           name='date'
-          defaultValue={null}
           InputLabelProps={{
             shrink: true,
           }}
