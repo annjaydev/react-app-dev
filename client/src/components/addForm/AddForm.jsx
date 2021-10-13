@@ -4,7 +4,7 @@ import { getDate } from '../../utils/date.formates';
 import { doctors } from '../../utils/collections';
 import './index.scss';
 
-export const AddForm = ({ sendData, id, currentData }) => {
+export const AddForm = ({ sendData, id, currentData, showWarning }) => {
 
   const [buttonDisable, setButtonDisable] = useState(true);
 
@@ -46,6 +46,8 @@ export const AddForm = ({ sendData, id, currentData }) => {
         date: '',
         complains: ''
       });
+    } else if (buttonDisable) {
+      showWarning('Заполните все поля');
     }
   }
 

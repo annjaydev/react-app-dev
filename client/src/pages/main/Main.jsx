@@ -53,16 +53,16 @@ export const Main = ({ id, token, logout }) => {
   }
 
   const createAppointment = async ({ fullName, doctor, date, complains }) => {
-    const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/addAppointment`, {
+    await axios.post(`http://${process.env.REACT_APP_BASE_URL}/addAppointment`, {
       fullName,
       doctor,
       date,
       complains,
       id
+    }).then(result => {
+      setAppointments(result.data);
+      showSuccessSnack('Добавлен новый прием');
     });
-
-    setAppointments(result.data);
-    showSuccessSnack('Добавлен новый прием')
 
   }
 
@@ -123,6 +123,14 @@ export const Main = ({ id, token, logout }) => {
     setOpenSnack(true);
   }
 
+  const showWarningSnack = (text) => {
+    setSnackData({
+      severety: 'warning',
+      text: text
+    })
+    setOpenSnack(true);
+  }
+
   useEffect(() => {
     if (id) {
       getAllAppointments(id)
@@ -157,14 +165,18 @@ export const Main = ({ id, token, logout }) => {
       else if (sortValue === 'Дата') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Date);
     }
 
-    if (appointmentsSorted) setAppointments(appointmentsSorted);
+    if (appointmentsSorted) {
+      setAppointments(appointmentsSorted);
+      showSuccessSnack('Приемы отсортированы')
+    }
   }, [sortDirection, sortValue]);
 
   useEffect(() => {
-    const result = filterByDates(appointmentsCopy, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
     if (datesPeriod.dateFrom && datesPeriod.dateTo) {
+      const result = filterByDates(appointmentsCopy, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
       setAppointments(result);
-    }
+      showSuccessSnack('Приемы отфильтрованы')
+    } 
   }, [datesPeriod])
 
   return (
@@ -174,9 +186,8 @@ export const Main = ({ id, token, logout }) => {
         sendData={createAppointment}
         currentData={noAppointment}
         id='main-add-form'
+        showWarning={showWarningSnack}
       />
-
-      <div className="class"></div>
 
       <div className='sort-block'>
         <SortSelector
@@ -196,7 +207,7 @@ export const Main = ({ id, token, logout }) => {
 
         {!showFilter && <div className='filter-activator'>
           <p className='common-text'>Добавить фильтр по дате: </p>
-          <Tooltip title='Добавить фильтр'>
+          <Tooltip title='Добавить фильтр' >
             <AddBoxIcon
               className='filter-add-btn'
               style={{ fontSize: 30 }}
@@ -210,6 +221,7 @@ export const Main = ({ id, token, logout }) => {
         <DateFilter
           deleteFilter={cancelFilter}
           setDatesPeriod={setDatesPeriod}
+          showWarning={showWarningSnack}
         />}
 
       {
@@ -231,6 +243,7 @@ export const Main = ({ id, token, logout }) => {
         currentData={currentAppointment}
         cancelAction={cleanDialog}
         confirmAction={editAppointment}
+        showWarning={showWarningSnack}
       />
 
       <DeleteWarning
@@ -240,8 +253,13 @@ export const Main = ({ id, token, logout }) => {
         confirmAction={deleteAppointment}
       />
 
-      <Snackbar open={openSnack} autoHideDuration={3000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={snackData.severety}>
+      <Snackbar open={openSnack} autoHideDuration={4000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={snackData.severety}
+          variant='filled'
+          style={{fontSize: '20px'}}
+        >
           {snackData.text}
         </Alert>
       </Snackbar>

@@ -3,7 +3,7 @@ import { TextField } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import './index.scss';
 
-export const DateFilter = ({deleteFilter, setDatesPeriod}) => {
+export const DateFilter = ({deleteFilter, setDatesPeriod, showWarning}) => {
 
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -13,6 +13,10 @@ export const DateFilter = ({deleteFilter, setDatesPeriod}) => {
         dateTo &&
         dateFrom < dateTo) {
       setDatesPeriod({dateFrom, dateTo});
+    } else if (!dateFrom || !dateTo) {
+      showWarning('Заполните все поля фильтрации приемов по дате');
+    } else if (dateFrom > dateTo) {
+      showWarning('Убедитесь в правильности введенных дат');
     }
   }
 
