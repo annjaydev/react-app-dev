@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { TextField } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { getDate } from '../../utils/date.formates';
 import './index.scss';
 
-export const DateFilter = ({deleteFilter, setDatesPeriod, showWarning}) => {
+export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
 
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [dateFrom, setDateFrom] = useState(getDate(new Date()));
+  const [dateTo, setDateTo] = useState(dateFrom);
 
   const sendFilterData = () => {
-    if (dateFrom && 
-        dateTo &&
-        dateFrom < dateTo) {
-      setDatesPeriod({dateFrom, dateTo});
+    if (dateFrom &&
+      dateTo &&
+      dateFrom <= dateTo) {
+      setDatesPeriod({ dateFrom, dateTo });
     } else if (!dateFrom || !dateTo) {
       showWarning('Заполните все поля фильтрации приемов по дате');
     } else if (dateFrom > dateTo) {
@@ -29,7 +30,8 @@ export const DateFilter = ({deleteFilter, setDatesPeriod, showWarning}) => {
         <TextField
           className='date-filter__field base-input'
           type='date'
-          name='date'
+          name='date-from'
+          value={dateFrom}
           InputLabelProps={{
             shrink: true,
           }}
@@ -47,12 +49,16 @@ export const DateFilter = ({deleteFilter, setDatesPeriod, showWarning}) => {
         <TextField
           className='date-filter__field base-input'
           type='date'
-          name='date'
+          name='date-to'
+          value={dateTo}
           InputLabelProps={{
             shrink: true,
           }}
           InputProps={{
             disableUnderline: true
+          }}
+          inputProps={{
+            min: dateFrom
           }}
           onChange={(e) => setDateTo(e.target.value)}
         />
@@ -65,7 +71,7 @@ export const DateFilter = ({deleteFilter, setDatesPeriod, showWarning}) => {
         Фильтровать
       </button>
 
-      <DeleteOutlineIcon 
+      <DeleteOutlineIcon
         className='date-filter__cancel-btn'
         onClick={() => deleteFilter(false)}
       />

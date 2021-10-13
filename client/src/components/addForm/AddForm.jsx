@@ -78,7 +78,7 @@ export const AddForm = ({ sendData, id, currentData, showWarning }) => {
             value={formData.doctor}
             onChange={(e) => changeHandler(e)}
           >
-            <option selected disabled hidden value=''></option>
+            <option disabled hidden value=''></option>
             {doctors.map(doctor => {
               return <option key={doctor.id} value={doctor.name}>{doctor.name}</option>
             })};

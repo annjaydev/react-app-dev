@@ -30,10 +30,12 @@ export const Main = ({ id, token, logout }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [warningOpen, setWarningOpen] = useState(false);
 
+  const [sortProcess, setSortProcess] = useState(false);
   const [sortValue, setSortValue] = useState('');
   const [sortDirection, setSortDirection] = useState('');
   const [showSortDirection, setShowDirection] = useState('');
 
+  const [filterProcess, setFilterProcess] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [datesPeriod, setDatesPeriod] = useState([{
     dateFrom: '',
@@ -60,7 +62,12 @@ export const Main = ({ id, token, logout }) => {
       complains,
       id
     }).then(result => {
-      setAppointments(result.data);
+      if (sortProcess || filterProcess) {
+        setAppointmentsCopy(result.data)
+      } else {
+        setAppointmentsCopy(result.data)
+        setAppointments(result.data);
+      }
       showSuccessSnack('Добавлен новый прием');
     });
 
@@ -74,7 +81,15 @@ export const Main = ({ id, token, logout }) => {
       complains: parameter.complains,
       id: currentAppointment.id
     }).then(async res => {
-      await getAllAppointments(id).then(res => setAppointments(res));
+      await getAllAppointments(id)
+        .then(res => {
+          if (sortProcess || filterProcess) {
+            setAppointmentsCopy(res);
+          } else {
+            setAppointmentsCopy(res);
+            setAppointments(res);
+          }
+        });
       setDialogOpen(false);
       setCurrentAppointment(noAppointment);
       showSuccessSnack('Прием изменен')
@@ -86,7 +101,15 @@ export const Main = ({ id, token, logout }) => {
       `http://${process.env.REACT_APP_BASE_URL}/deleteAppointment?id=${currentAppointment.id}`
     );
 
-    await getAllAppointments(id).then(res => setAppointments(res));
+    await getAllAppointments(id)
+    .then(res => {
+      if (sortProcess || filterProcess) {
+        setAppointmentsCopy(res);
+      } else {
+        setAppointmentsCopy(res);
+        setAppointments(res);
+      }
+    });
     setWarningOpen(false);
     setCurrentAppointment(noAppointment);
     showSuccessSnack('Прием удален');
@@ -102,9 +125,73 @@ export const Main = ({ id, token, logout }) => {
     setCurrentAppointment(noAppointment);
   }
 
+  const sortAppointments = (array) => {
+    let direction = '';
+    let property = '';
+
+    if (sortDirection) {
+      switch (sortDirection) {
+        case 'По возрастанию':
+          direction = SortDirections.Asc;
+          break;
+
+        case 'По убыванию':
+          direction = SortDirections.Desc;
+          break;
+      }
+    }
+
+    if (sortValue) {
+      switch (sortValue) {
+        case 'Имя':
+          property = SortValues.Name;
+          break;
+
+        case 'Врач':
+          property = SortValues.Doctor;
+          break;
+
+        case 'Дата':
+          property = SortValues.Date;
+          break;
+      }
+    }
+
+    if (direction && property) {
+      setSortProcess(true);
+
+      const appointmentsSorted =  sortByProp(array, direction, property);
+
+      setAppointments(appointmentsSorted);
+      showSuccessSnack('Приемы отсортированы');
+      console.log('Сортировка отработала');
+    }
+  }
+
+  const filterAppointments = (array) => {
+    if (datesPeriod.dateFrom && datesPeriod.dateTo) {
+      setFilterProcess(true);
+
+      const result = filterByDates(array, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
+
+      setAppointments(result);
+      showSuccessSnack('Приемы отфильтрованы');
+      console.log('Фильтрация отработала');
+    }
+  }
+
   const cancelFilter = () => {
     setAppointments(appointmentsCopy);
+    setFilterProcess(false);
     setShowFilter(false);
+    setDatesPeriod({
+      dateFrom: '',
+      dateTo: ''
+    });
+
+    if (sortProcess) {
+      sortAppointments(appointmentsCopy);
+    }
   }
 
   const handleClose = () => {
@@ -146,38 +233,36 @@ export const Main = ({ id, token, logout }) => {
     if (sortValue && sortValue !== 'Отменить') {
       setShowDirection(true);
     } else if (sortValue === 'Отменить') {
+      setSortProcess(false);
       setShowDirection(false);
       setSortDirection('');
       setAppointments(appointmentsCopy);
+
+      if (filterProcess) {
+        filterAppointments(appointmentsCopy);
+      }
     }
   }, [sortValue]);
 
   useEffect(() => {
-    let appointmentsSorted = null;
-    if (sortDirection && sortDirection === 'По возрастанию') {
-      if (sortValue === 'Имя') appointmentsSorted = sortByProp(appointments, SortDirections.Asc, SortValues.Name);
-      else if (sortValue === 'Врач') appointmentsSorted = sortByProp(appointments, SortDirections.Asc, SortValues.Doctor);
-      else if (sortValue === 'Дата') appointmentsSorted = sortByProp(appointments, SortDirections.Asc, SortValues.Date);
-
-    } else if (sortDirection && sortDirection === 'По убыванию') {
-      if (sortValue === 'Имя') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Name);
-      else if (sortValue === 'Врач') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Doctor);
-      else if (sortValue === 'Дата') appointmentsSorted = sortByProp(appointments, SortDirections.Desc, SortValues.Date);
-    }
-
-    if (appointmentsSorted) {
-      setAppointments(appointmentsSorted);
-      showSuccessSnack('Приемы отсортированы')
-    }
-  }, [sortDirection, sortValue]);
+    sortAppointments(appointmentsCopy);
+  }, [sortDirection, sortValue, appointmentsCopy]);
 
   useEffect(() => {
-    if (datesPeriod.dateFrom && datesPeriod.dateTo) {
-      const result = filterByDates(appointmentsCopy, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
-      setAppointments(result);
-      showSuccessSnack('Приемы отфильтрованы')
-    } 
-  }, [datesPeriod])
+    filterAppointments(appointmentsCopy);
+  }, [datesPeriod, appointmentsCopy]);
+
+  useEffect(() => {
+    if (sortProcess && filterProcess) {
+      sortAppointments(appointmentsCopy);
+      filterAppointments(appointments);
+    }
+
+    console.log('-------------', sortValue);
+    console.log('-------------', sortDirection);
+    console.log('-------------', datesPeriod.dateFrom);
+    console.log('-------------', datesPeriod.dateTo);
+  }, [sortValue, sortDirection, datesPeriod]);
 
   return (
     <div>
@@ -256,9 +341,9 @@ export const Main = ({ id, token, logout }) => {
       <Snackbar open={openSnack} autoHideDuration={4000} onClose={handleClose}>
         <Alert
           onClose={handleClose}
-          severity={snackData.severety}
+          severity={snackData.severety || 'info'}
           variant='filled'
-          style={{fontSize: '20px'}}
+          style={{ fontSize: '20px' }}
         >
           {snackData.text}
         </Alert>
