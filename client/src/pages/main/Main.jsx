@@ -6,21 +6,21 @@ import { SortSelector } from '../../components/sortSelector/SortSelector';
 import { FormDialog } from '../../components/formDialog/FormDialog';
 import { DeleteWarning } from '../../components/deleteWarning/DeleteWarning';
 import { DateFilter } from '../../components/dateFilter/DateFilter';
-import { sortByProp } from '../../utils/sort.constant';
 import { filterByDates } from '../../utils/filter.constant';
-import { noAppointment, sortCollection, SortValues, SortDirections } from '../../utils/collections';
+import { noAppointment, sortCollection } from '../../utils/collections';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import { Tooltip } from '@material-ui/core';
 import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab'
+import { Alert } from '@material-ui/lab';
+import { sortBy } from 'lodash';
 import axios from 'axios';
 import './index.scss';
 
 export const Main = ({ id, token, logout }) => {
 
   const sortDirectionColl = [
-    { id: '2ci1', value: 'По возрастанию' },
-    { id: '2ci2', value: 'По убыванию' }
+    { id: '2ci1', key: 'asc', value: 'По возрастанию' },
+    { id: '2ci2', key: 'desc', value: 'По убыванию' }
   ];
 
   const [appointments, setAppointments] = useState([]);
@@ -30,17 +30,9 @@ export const Main = ({ id, token, logout }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [warningOpen, setWarningOpen] = useState(false);
 
-  const [sortProcess, setSortProcess] = useState(false);
-  const [sortValue, setSortValue] = useState('');
-  const [sortDirection, setSortDirection] = useState('');
-  const [showSortDirection, setShowDirection] = useState('');
-
-  const [filterProcess, setFilterProcess] = useState(false);
+  const [sort, setSort] = useState(null);
+  const [filter, setFilter] = useState({ isFilter: false, startDate: null, endDate: null });
   const [showFilter, setShowFilter] = useState(false);
-  const [datesPeriod, setDatesPeriod] = useState([{
-    dateFrom: '',
-    dateTo: ''
-  }]);
 
   const [openSnack, setOpenSnack] = useState(false);
   const [snackData, setSnackData] = useState({
@@ -62,15 +54,10 @@ export const Main = ({ id, token, logout }) => {
       complains,
       id
     }).then(result => {
-      if (sortProcess || filterProcess) {
-        setAppointmentsCopy(result.data)
-      } else {
-        setAppointmentsCopy(result.data)
-        setAppointments(result.data);
-      }
+      setAppointmentsCopy(result.data)
+      setAppointments(result.data);
       showSuccessSnack('Добавлен новый прием');
     });
-
   }
 
   const editAppointment = async (parameter) => {
@@ -83,12 +70,8 @@ export const Main = ({ id, token, logout }) => {
     }).then(async res => {
       await getAllAppointments(id)
         .then(res => {
-          if (sortProcess || filterProcess) {
-            setAppointmentsCopy(res);
-          } else {
-            setAppointmentsCopy(res);
-            setAppointments(res);
-          }
+          setAppointmentsCopy(res);
+          setAppointments(res);
         });
       setDialogOpen(false);
       setCurrentAppointment(noAppointment);
@@ -102,14 +85,10 @@ export const Main = ({ id, token, logout }) => {
     );
 
     await getAllAppointments(id)
-    .then(res => {
-      if (sortProcess || filterProcess) {
-        setAppointmentsCopy(res);
-      } else {
+      .then(res => {
         setAppointmentsCopy(res);
         setAppointments(res);
-      }
-    });
+      });
     setWarningOpen(false);
     setCurrentAppointment(noAppointment);
     showSuccessSnack('Прием удален');
@@ -125,73 +104,9 @@ export const Main = ({ id, token, logout }) => {
     setCurrentAppointment(noAppointment);
   }
 
-  const sortAppointments = (array) => {
-    let direction = '';
-    let property = '';
-
-    if (sortDirection) {
-      switch (sortDirection) {
-        case 'По возрастанию':
-          direction = SortDirections.Asc;
-          break;
-
-        case 'По убыванию':
-          direction = SortDirections.Desc;
-          break;
-      }
-    }
-
-    if (sortValue) {
-      switch (sortValue) {
-        case 'Имя':
-          property = SortValues.Name;
-          break;
-
-        case 'Врач':
-          property = SortValues.Doctor;
-          break;
-
-        case 'Дата':
-          property = SortValues.Date;
-          break;
-      }
-    }
-
-    if (direction && property) {
-      setSortProcess(true);
-
-      const appointmentsSorted =  sortByProp(array, direction, property);
-
-      setAppointments(appointmentsSorted);
-      showSuccessSnack('Приемы отсортированы');
-      console.log('Сортировка отработала');
-    }
-  }
-
-  const filterAppointments = (array) => {
-    if (datesPeriod.dateFrom && datesPeriod.dateTo) {
-      setFilterProcess(true);
-
-      const result = filterByDates(array, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
-
-      setAppointments(result);
-      showSuccessSnack('Приемы отфильтрованы');
-      console.log('Фильтрация отработала');
-    }
-  }
-
   const cancelFilter = () => {
-    setAppointments(appointmentsCopy);
-    setFilterProcess(false);
+    setFilter({ isFilter: false, startDate: null, endDate: null });
     setShowFilter(false);
-    setDatesPeriod({
-      dateFrom: '',
-      dateTo: ''
-    });
-
-    if (sortProcess) {
-      sortAppointments(appointmentsCopy);
-    }
   }
 
   const handleClose = () => {
@@ -230,39 +145,47 @@ export const Main = ({ id, token, logout }) => {
   }, [id]);
 
   useEffect(() => {
-    if (sortValue && sortValue !== 'Отменить') {
-      setShowDirection(true);
-    } else if (sortValue === 'Отменить') {
-      setSortProcess(false);
-      setShowDirection(false);
-      setSortDirection('');
-      setAppointments(appointmentsCopy);
+    if (sort && sort.key && sort.dir) {
+      sortFunction({ key: sort.key, dir: sort.dir });
+    }
+  }, [appointmentsCopy]);
 
-      if (filterProcess) {
-        filterAppointments(appointmentsCopy);
+  const sortFunction = (currentSort) => {
+    let sortedArray = [...appointmentsCopy]
+    if (currentSort && currentSort.key) {
+      if (currentSort.dir === 'asc') {
+        sortedArray = sortBy(sortedArray, item => item[currentSort.key]);
+      }
+      if (currentSort.dir === 'desc') {
+        sortedArray = sortBy(sortedArray, item => item[currentSort.key]).reverse();
       }
     }
-  }, [sortValue]);
+    setAppointments(sortedArray);
+  }
 
-  useEffect(() => {
-    sortAppointments(appointmentsCopy);
-  }, [sortDirection, sortValue, appointmentsCopy]);
+  const changeSortValue = (value, isKey) => {
+    if (value === 'none') {
+      setSort(null);
+      sortFunction(null);
+    } else {
 
-  useEffect(() => {
-    filterAppointments(appointmentsCopy);
-  }, [datesPeriod, appointmentsCopy]);
+      let newSort = null;
+      if (sort && sort.dir) {
+        newSort = { key: (isKey ? value : sort.key), dir: (isKey ? sort.dir : value) };
+      } else {
+        newSort = { key: (isKey ? value : sort.key), dir: (isKey ? 'asc' : value) };
+      }
 
-  useEffect(() => {
-    if (sortProcess && filterProcess) {
-      sortAppointments(appointmentsCopy);
-      filterAppointments(appointments);
+      sortFunction(newSort);
+      setSort(newSort);
     }
+  }
 
-    console.log('-------------', sortValue);
-    console.log('-------------', sortDirection);
-    console.log('-------------', datesPeriod.dateFrom);
-    console.log('-------------', datesPeriod.dateTo);
-  }, [sortValue, sortDirection, datesPeriod]);
+  const getFilteredValues = (currentAppointments) => {
+    let filteredArray = [...currentAppointments];
+    filteredArray = filterByDates(filteredArray, 'date', filter.startDate, filter.endDate)
+    return filteredArray;
+  }
 
   return (
     <div>
@@ -278,16 +201,20 @@ export const Main = ({ id, token, logout }) => {
         <SortSelector
           labelText='Сортировать по:'
           collection={sortCollection}
-          changeFilterValue={setSortValue}
+          changeSortValue={changeSortValue}
+          isKey={true}
+          currentSort={sort}
         />
 
         {
-          showSortDirection &&
-          <SortSelector
-            labelText='Направление:'
-            collection={sortDirectionColl}
-            changeFilterValue={setSortDirection}
-          />
+          sort && sort.key && (
+            <SortSelector
+              labelText='Направление:'
+              collection={sortDirectionColl}
+              changeSortValue={changeSortValue}
+              currentSort={sort}
+            />
+          )
         }
 
         {!showFilter && <div className='filter-activator'>
@@ -305,14 +232,14 @@ export const Main = ({ id, token, logout }) => {
       {showFilter &&
         <DateFilter
           deleteFilter={cancelFilter}
-          setDatesPeriod={setDatesPeriod}
+          setDatesPeriod={setFilter}
           showWarning={showWarningSnack}
         />}
 
       {
         appointments.length > 0 ?
           <Appointments
-            appointments={appointments}
+            appointments={filter.isFilter ? getFilteredValues(appointments) : appointments}
             setCurrentAppointment={setCurrentAppointment}
             setDialogOpen={setDialogOpen}
             setWarningOpen={setWarningOpen}
