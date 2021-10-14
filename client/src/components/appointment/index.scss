@@ -1,5 +1,9 @@
 .appointments {
-  padding: 24px;
+  padding: 24px 10%;
+
+  @media (max-width: 1000px) {
+    padding: 24px;
+  }
 
   &__header {
     display: grid;
@@ -46,8 +50,20 @@
     align-items: center;
   }
 
+
   ::-webkit-scrollbar {
-    width: 0;
-    background: transparent; 
+    width: 10px;               
   }
+  
+  ::-webkit-scrollbar-track {
+    background: rgb(214, 233, 245);       
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(193, 193, 230);    
+    border-radius: 20px;       
+    border: 1px solid rgb(219, 208, 187);
+  }
+   
+  
 }

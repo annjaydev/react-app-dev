@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { getDate } from '../../utils/date.formates';
+import { doctors } from '../../utils/collections';
 import './index.scss';
 
-export const AddForm = ({ sendData, id, currentData }) => {
+export const AddForm = ({ sendData, id, currentData, showWarning }) => {
 
   const [buttonDisable, setButtonDisable] = useState(true);
 
@@ -33,13 +34,6 @@ export const AddForm = ({ sendData, id, currentData }) => {
     });
   }
 
-  const doctors = [
-    { id: '1q1', name: 'Грызлов Борис Вячеславович' },
-    { id: '1q2', name: 'Азаров Дмитрий Игоревич' },
-    { id: '1q3', name: 'Аксенов Сергей Валерьевич' },
-    { id: '1q4', name: 'Володин Вячеслав Викторович' }
-  ];
-
   const onSubmitForm = (e) => {
     e.preventDefault();
     
@@ -52,6 +46,8 @@ export const AddForm = ({ sendData, id, currentData }) => {
         date: '',
         complains: ''
       });
+    } else if (buttonDisable) {
+      showWarning('Заполните все поля');
     }
   }
 
@@ -82,7 +78,7 @@ export const AddForm = ({ sendData, id, currentData }) => {
             value={formData.doctor}
             onChange={(e) => changeHandler(e)}
           >
-            <option selected disabled hidden value=''></option>
+            <option disabled hidden value=''></option>
             {doctors.map(doctor => {
               return <option key={doctor.id} value={doctor.name}>{doctor.name}</option>
             })};
@@ -95,7 +91,6 @@ export const AddForm = ({ sendData, id, currentData }) => {
             className='add-form__field'
             type='date'
             name='date'
-            // defaultValue={formData.date.slice(0, 10)}
             value={formData.date.slice(0, 10)}
             InputLabelProps={{
               shrink: true,

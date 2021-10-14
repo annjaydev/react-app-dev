@@ -3,7 +3,11 @@
   justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
-  padding: 20px 24px 0;
+  padding: 20px 10% 0;
+
+  @media (max-width: 1000px) {
+    padding: 20px 24px 0;
+  }
 }
 
 .filter-activator {

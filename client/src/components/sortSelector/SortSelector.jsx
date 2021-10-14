@@ -8,8 +8,9 @@ export const SortSelector = ({ labelText, collection, changeFilterValue }) => {
       <select
         className='sort-selector__field common-text base-input'
         onChange={(e) => changeFilterValue(e.target.value)}
+        defaultValue=''
       >
-        <option selected disabled hidden value=''></option>
+        <option disabled hidden value=''></option>
         {collection.map(collItem => {
           return <option
             key={collItem.id}

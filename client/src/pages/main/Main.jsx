@@ -6,27 +6,17 @@ import { SortSelector } from '../../components/sortSelector/SortSelector';
 import { FormDialog } from '../../components/formDialog/FormDialog';
 import { DeleteWarning } from '../../components/deleteWarning/DeleteWarning';
 import { DateFilter } from '../../components/dateFilter/DateFilter';
-import { sortBy } from 'lodash';
+import { sortByProp } from '../../utils/sort.constant';
+import { filterByDates } from '../../utils/filter.constant';
+import { noAppointment, sortCollection, SortValues, SortDirections } from '../../utils/collections';
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import { Tooltip } from '@material-ui/core';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab'
 import axios from 'axios';
 import './index.scss';
 
 export const Main = ({ id, token, logout }) => {
-
-  const noAppointment = {
-    fullName: '',
-    doctor: '',
-    date: '',
-    complains: '',
-    id: ''
-  };
-
-  const sortCollection = [
-    { id: '1ci1', value: 'Имя' },
-    { id: '1ci2', value: 'Врач' },
-    { id: '1ci3', value: 'Дата' },
-    { id: '1ci4', value: 'Отменить' }
-  ];
 
   const sortDirectionColl = [
     { id: '2ci1', value: 'По возрастанию' },
@@ -40,15 +30,23 @@ export const Main = ({ id, token, logout }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [warningOpen, setWarningOpen] = useState(false);
 
+  const [sortProcess, setSortProcess] = useState(false);
   const [sortValue, setSortValue] = useState('');
   const [sortDirection, setSortDirection] = useState('');
   const [showSortDirection, setShowDirection] = useState('');
 
+  const [filterProcess, setFilterProcess] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [datesPeriod, setDatesPeriod] = useState([{
     dateFrom: '',
     dateTo: ''
   }]);
+
+  const [openSnack, setOpenSnack] = useState(false);
+  const [snackData, setSnackData] = useState({
+    severety: '',
+    text: ''
+  });
 
   const getAllAppointments = async (id) => {
     const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/getAllAppointments?id=${id}`);
@@ -57,15 +55,22 @@ export const Main = ({ id, token, logout }) => {
   }
 
   const createAppointment = async ({ fullName, doctor, date, complains }) => {
-    const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/addAppointment`, {
+    await axios.post(`http://${process.env.REACT_APP_BASE_URL}/addAppointment`, {
       fullName,
       doctor,
       date,
       complains,
       id
+    }).then(result => {
+      if (sortProcess || filterProcess) {
+        setAppointmentsCopy(result.data)
+      } else {
+        setAppointmentsCopy(result.data)
+        setAppointments(result.data);
+      }
+      showSuccessSnack('Добавлен новый прием');
     });
 
-    setAppointments(result.data);
   }
 
   const editAppointment = async (parameter) => {
@@ -76,9 +81,18 @@ export const Main = ({ id, token, logout }) => {
       complains: parameter.complains,
       id: currentAppointment.id
     }).then(async res => {
-      await getAllAppointments(id).then(res => setAppointments(res));
+      await getAllAppointments(id)
+        .then(res => {
+          if (sortProcess || filterProcess) {
+            setAppointmentsCopy(res);
+          } else {
+            setAppointmentsCopy(res);
+            setAppointments(res);
+          }
+        });
       setDialogOpen(false);
       setCurrentAppointment(noAppointment);
+      showSuccessSnack('Прием изменен')
     });
   }
 
@@ -87,9 +101,18 @@ export const Main = ({ id, token, logout }) => {
       `http://${process.env.REACT_APP_BASE_URL}/deleteAppointment?id=${currentAppointment.id}`
     );
 
-    await getAllAppointments(id).then(res => setAppointments(res));
+    await getAllAppointments(id)
+    .then(res => {
+      if (sortProcess || filterProcess) {
+        setAppointmentsCopy(res);
+      } else {
+        setAppointmentsCopy(res);
+        setAppointments(res);
+      }
+    });
     setWarningOpen(false);
     setCurrentAppointment(noAppointment);
+    showSuccessSnack('Прием удален');
   }
 
   const cleanWarning = () => {
@@ -102,28 +125,97 @@ export const Main = ({ id, token, logout }) => {
     setCurrentAppointment(noAppointment);
   }
 
-  const sortByProp = (direction, prop) => {
-    let result = null;
+  const sortAppointments = (array) => {
+    let direction = '';
+    let property = '';
 
-    if (direction === 'asc') {
-      result = sortBy(appointments, (item) => item[prop]);
-    } else if (direction === 'desc') {
-      result = sortBy(appointments, (item) => item[prop]).reverse();
+    if (sortDirection) {
+      switch (sortDirection) {
+        case 'По возрастанию':
+          direction = SortDirections.Asc;
+          break;
+
+        case 'По убыванию':
+          direction = SortDirections.Desc;
+          break;
+      }
     }
-    
-    setAppointments(result);
+
+    if (sortValue) {
+      switch (sortValue) {
+        case 'Имя':
+          property = SortValues.Name;
+          break;
+
+        case 'Врач':
+          property = SortValues.Doctor;
+          break;
+
+        case 'Дата':
+          property = SortValues.Date;
+          break;
+      }
+    }
+
+    if (direction && property) {
+      setSortProcess(true);
+
+      const appointmentsSorted =  sortByProp(array, direction, property);
+
+      setAppointments(appointmentsSorted);
+      showSuccessSnack('Приемы отсортированы');
+      console.log('Сортировка отработала');
+    }
   }
 
-  const filterByDates = () => {
-    return appointmentsCopy.filter(appointment => 
-      appointment.date >= datesPeriod.dateFrom &&
-      appointment.date <= datesPeriod.dateTo
-    );
+  const filterAppointments = (array) => {
+    if (datesPeriod.dateFrom && datesPeriod.dateTo) {
+      setFilterProcess(true);
+
+      const result = filterByDates(array, 'date', datesPeriod.dateFrom, datesPeriod.dateTo);
+
+      setAppointments(result);
+      showSuccessSnack('Приемы отфильтрованы');
+      console.log('Фильтрация отработала');
+    }
   }
 
   const cancelFilter = () => {
     setAppointments(appointmentsCopy);
+    setFilterProcess(false);
     setShowFilter(false);
+    setDatesPeriod({
+      dateFrom: '',
+      dateTo: ''
+    });
+
+    if (sortProcess) {
+      sortAppointments(appointmentsCopy);
+    }
+  }
+
+  const handleClose = () => {
+    setOpenSnack(false);
+    setSnackData({
+      severety: '',
+      text: ''
+    });
+  }
+
+  const showSuccessSnack = (text) => {
+    setSnackData({
+      severety: 'success',
+      text: text
+    })
+    setOpenSnack(true);
+  }
+
+  const showWarningSnack = (text) => {
+    setSnackData({
+      severety: 'warning',
+      text: text
+    })
+    setOpenSnack(true);
   }
 
   useEffect(() => {
@@ -134,34 +226,43 @@ export const Main = ({ id, token, logout }) => {
           setAppointmentsCopy(res);
         });
     }
-  }, []);
+
+  }, [id]);
 
   useEffect(() => {
     if (sortValue && sortValue !== 'Отменить') {
       setShowDirection(true);
     } else if (sortValue === 'Отменить') {
+      setSortProcess(false);
       setShowDirection(false);
       setSortDirection('');
       setAppointments(appointmentsCopy);
+
+      if (filterProcess) {
+        filterAppointments(appointmentsCopy);
+      }
     }
   }, [sortValue]);
 
   useEffect(() => {
-    if (sortDirection && sortDirection === 'По возрастанию') {
-      if (sortValue === 'Имя') sortByProp('asc', 'fullName');
-      else if (sortValue === 'Врач') sortByProp('asc', 'doctor');
-      else if (sortValue === 'Дата') sortByProp('asc', 'date');
-
-    } else if (sortDirection && sortDirection === 'По убыванию') {
-      if (sortValue === 'Имя') sortByProp('desc', 'fullName');
-      else if (sortValue === 'Врач') sortByProp('desc', 'doctor');
-      else if (sortValue === 'Дата') sortByProp('desc', 'date');
-    }
-  }, [sortDirection, sortValue]);
+    sortAppointments(appointmentsCopy);
+  }, [sortDirection, sortValue, appointmentsCopy]);
 
   useEffect(() => {
-    setAppointments(filterByDates());
-  }, [datesPeriod])
+    filterAppointments(appointmentsCopy);
+  }, [datesPeriod, appointmentsCopy]);
+
+  useEffect(() => {
+    if (sortProcess && filterProcess) {
+      sortAppointments(appointmentsCopy);
+      filterAppointments(appointments);
+    }
+
+    console.log('-------------', sortValue);
+    console.log('-------------', sortDirection);
+    console.log('-------------', datesPeriod.dateFrom);
+    console.log('-------------', datesPeriod.dateTo);
+  }, [sortValue, sortDirection, datesPeriod]);
 
   return (
     <div>
@@ -170,6 +271,7 @@ export const Main = ({ id, token, logout }) => {
         sendData={createAppointment}
         currentData={noAppointment}
         id='main-add-form'
+        showWarning={showWarningSnack}
       />
 
       <div className='sort-block'>
@@ -188,20 +290,23 @@ export const Main = ({ id, token, logout }) => {
           />
         }
 
-        { !showFilter && <div className='filter-activator'>
+        {!showFilter && <div className='filter-activator'>
           <p className='common-text'>Добавить фильтр по дате: </p>
-          <AddBoxIcon
-            className='filter-add-btn'
-            style={{ fontSize: 30 }}
-            onClick={() => setShowFilter(true)}
-          />
+          <Tooltip title='Добавить фильтр' >
+            <AddBoxIcon
+              className='filter-add-btn'
+              style={{ fontSize: 30 }}
+              onClick={() => setShowFilter(true)}
+            />
+          </Tooltip>
         </div>}
       </div>
 
-      { showFilter && 
-        <DateFilter 
-          deleteFilter={cancelFilter} 
+      {showFilter &&
+        <DateFilter
+          deleteFilter={cancelFilter}
           setDatesPeriod={setDatesPeriod}
+          showWarning={showWarningSnack}
         />}
 
       {
@@ -223,6 +328,7 @@ export const Main = ({ id, token, logout }) => {
         currentData={currentAppointment}
         cancelAction={cleanDialog}
         confirmAction={editAppointment}
+        showWarning={showWarningSnack}
       />
 
       <DeleteWarning
@@ -231,6 +337,17 @@ export const Main = ({ id, token, logout }) => {
         cancelAction={cleanWarning}
         confirmAction={deleteAppointment}
       />
+
+      <Snackbar open={openSnack} autoHideDuration={4000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={snackData.severety || 'info'}
+          variant='filled'
+          style={{ fontSize: '20px' }}
+        >
+          {snackData.text}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

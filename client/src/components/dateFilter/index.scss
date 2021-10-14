@@ -1,7 +1,12 @@
 .date-filter__container {
   display: flex;
   align-items: center;
-  padding: 10px 24px 0;
+  justify-content: flex-end;
+  padding: 10px 10% 0;
+
+  @media (max-width: 1000px) {
+    padding: 24px;
+  }
 }
 
 .date-filter__field {

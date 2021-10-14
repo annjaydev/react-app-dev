@@ -1,5 +1,6 @@
 import React from 'react';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { Tooltip } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { formatDate } from '../../utils/date.formates';
 import './index.scss';
@@ -31,34 +32,36 @@ export const Appointments = ({ appointments, setCurrentAppointment, setDialogOpe
                 {appointment.complains}
               </div>
               <div className='appointments__row-item'>
-                <DeleteOutlineIcon 
-                  onClick={() => {
-                    setCurrentAppointment({
-                      fullName: appointment.fullName,
-                      doctor: appointment.doctor,
-                      date: appointment.date,
-                      complains: appointment.complains,
-                      id: appointment._id
-                    });
-
-                    setWarningOpen(true);
-                  }
-                  }
-                />
-                <EditIcon
-                  onClick={() => {
-                    setCurrentAppointment({
-                      fullName: appointment.fullName,
-                      doctor: appointment.doctor,
-                      date: appointment.date,
-                      complains: appointment.complains,
-                      id: appointment._id
-                    });
-
-                    setDialogOpen(true);
-                  }
-                  }
-                />
+                <Tooltip title='Удалить прием'>
+                  <DeleteOutlineIcon
+                    className='pointer'
+                    onClick={() => {
+                      setCurrentAppointment({
+                        fullName: appointment.fullName,
+                        doctor: appointment.doctor,
+                        date: appointment.date,
+                        complains: appointment.complains,
+                        id: appointment._id
+                      });
+                      setWarningOpen(true);
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title='Редактировать прием'>
+                  <EditIcon
+                    className='pointer'
+                    onClick={() => {
+                      setCurrentAppointment({
+                        fullName: appointment.fullName,
+                        doctor: appointment.doctor,
+                        date: appointment.date,
+                        complains: appointment.complains,
+                        id: appointment._id
+                      });
+                      setDialogOpen(true);
+                    }}
+                  />
+                </Tooltip>
               </div>
             </div>
 
