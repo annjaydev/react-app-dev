@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 import { Header } from '../../components/header/Header';
 import DomainOutlined from '@material-ui/icons/DomainOutlined';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
+import { warningMessages } from '../../utils/collections';
 import axios from 'axios';
+
+const url = `http://${process.env.REACT_APP_BASE_URL}/auth`;
 
 export const Login = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
@@ -14,17 +17,11 @@ export const Login = ({ onLogin }) => {
   });
 
   const isLoginFilled = () => {
-    if (formData.login.length !== 0) {
-      return true;
-    }
-    return false;
+    return formData.login.length ? true : false;
   }
 
   const isPasswordFilled = () => {
-    if (formData.password.length !== 0) {
-      return true;
-    }
-    return false;
+    return formData.password.length ? true : false;
   }
 
   const changeHandler = (e) => {
@@ -41,7 +38,7 @@ export const Login = ({ onLogin }) => {
       setWarnText('');
       setLoading(true);
 
-      await axios.post(`http://${process.env.REACT_APP_BASE_URL}/login`, body)
+      await axios.post(`${url}/login`, body)
         .then(result => {
           if (result.data.error) {
             setWarnText(result.data.error);
@@ -56,16 +53,15 @@ export const Login = ({ onLogin }) => {
       setLoading(false);
 
       if (!isLoginFilled()) {
-        setWarnText('Заполните поле логина');
+        setWarnText(warningMessages.emptyField);
       } else if (!isPasswordFilled()) {
-        setWarnText('Заполните поле пароля');
+        setWarnText(warningMessages.emptyField);
       }
     }
   }
 
   const sendFormData = (e) => {
     e.preventDefault();
-
     loginHandler();
   }
 
@@ -76,7 +72,6 @@ export const Login = ({ onLogin }) => {
       <div className="auth-page">
         <DomainOutlined
           className='auth-page__img'
-          style={{ fontSize: 450 }}
         />
 
         <form
@@ -88,10 +83,7 @@ export const Login = ({ onLogin }) => {
           <div className='warning-field'>
             {warnText &&
               <>
-                <ErrorOutline
-                  className='warning-icon'
-                  style={{ fontSize: 18, color: 'red' }}
-                />
+                <ErrorOutline className='warning-icon' />
                 {warnText}
               </>
             }
@@ -119,7 +111,9 @@ export const Login = ({ onLogin }) => {
             className='auth-page__btn pointer'
             type='submit'
             disabled={loading}
-          >Войти</button>
+          >
+            Войти
+          </button>
 
           <Link className='change-auth-btn ' to='/registration'>Зарегистрироваться</Link>
         </form>

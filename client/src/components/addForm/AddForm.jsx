@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { getDate } from '../../utils/date.formates';
-import { doctors } from '../../utils/collections';
+import { doctors, warningMessages } from '../../utils/collections';
 import './index.scss';
 
 export const AddForm = ({ sendData, id, currentData, showWarning }) => {
 
   const [buttonDisable, setButtonDisable] = useState(true);
-
   const [formData, setFormData] = useState({
     fullName: currentData.fullName,
     doctor: currentData.doctor,
@@ -47,7 +46,7 @@ export const AddForm = ({ sendData, id, currentData, showWarning }) => {
         complains: ''
       });
     } else if (buttonDisable) {
-      showWarning('Заполните все поля');
+      showWarning(warningMessages.emptyField);
     }
   }
 
@@ -73,15 +72,12 @@ export const AddForm = ({ sendData, id, currentData, showWarning }) => {
           <label className='add-form__label'>Врач:</label>
           <select
             className='add-form__field'
-            style={{ width: '100%', backgroundColor: '#ffffff' }}
             name='doctor'
             value={formData.doctor}
             onChange={(e) => changeHandler(e)}
           >
             <option disabled hidden value=''></option>
-            {doctors.map(doctor => {
-              return <option key={doctor.id} value={doctor.name}>{doctor.name}</option>
-            })};
+            {doctors.map(doctor =>  <option key={doctor.id} value={doctor.name}>{doctor.name}</option>)};
           </select>
         </div>
 
@@ -124,7 +120,9 @@ export const AddForm = ({ sendData, id, currentData, showWarning }) => {
         className='add-form__submit-btn'
         type='submit'
         disabled={buttonDisable}
-      >Добавить</button>
+      >
+        Добавить
+      </button>
     </form>
   );
 }

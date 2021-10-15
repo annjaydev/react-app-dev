@@ -5,7 +5,7 @@ import './index.scss';
 export const Header = ({ title, logout, token }) => {
   return (
     <div className='header'>
-      <HealingOutlined className='header__logo' style={{ fontSize: 90 }} />
+      <HealingOutlined className='header__logo' />
       <h1 className='header__title'>{title}</h1>
       {!!token &&
         <button

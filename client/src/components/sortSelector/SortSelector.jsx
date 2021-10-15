@@ -12,14 +12,14 @@ export const SortSelector = ({ labelText, collection, changeSortValue, isKey = f
         value={currentSort ? (isKey ? currentSort.key : currentSort.dir) : ''}
       >
         <option disabled hidden value=''></option>
-        {collection.map(collItem => {
-          return <option
+        {collection.map(collItem => (
+          <option
             key={collItem.id}
             value={collItem.key}
           >
             {collItem.value}
           </option>
-        })};
+        ))};
       </select>
     </div>
   );

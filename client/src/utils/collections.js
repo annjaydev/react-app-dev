@@ -19,3 +19,18 @@ export const doctors = [
   { id: '1q3', name: 'Аксенов Сергей Валерьевич' },
   { id: '1q4', name: 'Володин Вячеслав Викторович' }
 ];
+
+export const tableHeaders = [
+  {id: '1t1', header: 'Имя'},
+  {id: '1t2', header: 'Врач'},
+  {id: '1t3', header: 'Дата'},
+  {id: '1t4', header: 'Жалобы'},
+];
+
+export const warningMessages = {
+  emptyField: 'Заполните все поля',
+  wrongDates: 'Убедитесь в правильности введенных дат',
+  loginLength: 'Длина логина - 6-20 символов',
+  passwordCheck: 'Пароль может состоять только из латинских букв и обязательно должен включать в себя 1 букву и 1 цифру. Длина пароля - 6-20 символов',
+  passwordRepeat: 'Пароли не совпадают'
+};
