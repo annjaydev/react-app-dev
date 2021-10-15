@@ -34,3 +34,9 @@ export const warningMessages = {
   passwordCheck: 'Пароль может состоять только из латинских букв и обязательно должен включать в себя 1 букву и 1 цифру. Длина пароля - 6-20 символов',
   passwordRepeat: 'Пароли не совпадают'
 };
+
+export const successMessages = {
+  newAppointment: 'Добавлен новый прием',
+  editedAppointment: 'Прием изменен',
+  deletedAppointment: 'Прием удален'
+}

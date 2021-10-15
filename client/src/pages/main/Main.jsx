@@ -7,7 +7,7 @@ import { FormDialog } from '../../components/formDialog/FormDialog';
 import { DeleteWarning } from '../../components/deleteWarning/DeleteWarning';
 import { DateFilter } from '../../components/dateFilter/DateFilter';
 import { filterByDates } from '../../utils/filter.constant';
-import { noAppointment, sortCollection } from '../../utils/collections';
+import { noAppointment, sortCollection, successMessages } from '../../utils/collections';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import { Tooltip } from '@material-ui/core';
 import { Snackbar } from '@material-ui/core';
@@ -57,7 +57,7 @@ export const Main = ({ id, token, logout }) => {
     }).then(result => {
       setAppointmentsCopy(result.data)
       setAppointments(result.data);
-      showSuccessSnack('Добавлен новый прием');
+      showSuccessSnack(successMessages.newAppointment);
     });
   }
 
@@ -76,7 +76,7 @@ export const Main = ({ id, token, logout }) => {
         });
       setDialogOpen(false);
       setCurrentAppointment(noAppointment);
-      showSuccessSnack('Прием изменен')
+      showSuccessSnack(successMessages.editedAppointment)
     });
   }
 
@@ -92,7 +92,7 @@ export const Main = ({ id, token, logout }) => {
       });
     setWarningOpen(false);
     setCurrentAppointment(noAppointment);
-    showSuccessSnack('Прием удален');
+    showSuccessSnack(successMessages.deletedAppointment);
   }
 
   const cleanWarning = () => {
