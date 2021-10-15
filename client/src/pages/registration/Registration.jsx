@@ -10,6 +10,8 @@ const checkLength = /[A-Za-z\d]{6,20}/;
 const checkLang = /^[A-Za-z\d]+$/;
 const checkContent = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]/;
 
+const url = `http://${process.env.REACT_APP_BASE_URL}/auth`;
+
 export const Registration = ({ onRegister }) => {
   const [loading, setLoading] = useState(false);
   const [warnText, setWarnText] = useState('');
@@ -60,7 +62,7 @@ export const Registration = ({ onRegister }) => {
         setWarnText(warningMessages.passwordRepeat);
       } else {
         setLoading(true);
-        await axios.post(`http://${process.env.REACT_APP_BASE_URL}/registration`, body)
+        await axios.post(`${url}/registration`, body)
           .then(result => {
             if (result.data.error) {
               setWarnText(result.data.error);
@@ -95,7 +97,6 @@ export const Registration = ({ onRegister }) => {
 
         <DomainOutlined
           className='auth-page__img'
-          style={{ fontSize: 450 }}
         />
 
         <form

@@ -6,6 +6,8 @@ import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import { warningMessages } from '../../utils/collections';
 import axios from 'axios';
 
+const url = `http://${process.env.REACT_APP_BASE_URL}/auth`;
+
 export const Login = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [warnText, setWarnText] = useState('');
@@ -36,7 +38,7 @@ export const Login = ({ onLogin }) => {
       setWarnText('');
       setLoading(true);
 
-      await axios.post(`http://${process.env.REACT_APP_BASE_URL}/login`, body)
+      await axios.post(`${url}/login`, body)
         .then(result => {
           if (result.data.error) {
             setWarnText(result.data.error);

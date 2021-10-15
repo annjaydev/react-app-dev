@@ -21,6 +21,8 @@ const sortDirectionColl = [
   { id: '2ci2', key: 'desc', value: 'По убыванию' }
 ];
 
+const url = `http://${process.env.REACT_APP_BASE_URL}/appointments`;
+
 export const Main = ({ id, token, logout }) => {
 
   const [appointments, setAppointments] = useState([]);
@@ -41,13 +43,12 @@ export const Main = ({ id, token, logout }) => {
   });
 
   const getAllAppointments = async (id) => {
-    const result = await axios.post(`http://${process.env.REACT_APP_BASE_URL}/getAllAppointments?id=${id}`);
-
+    const result = await axios.get(`${url}/getAllAppointments?id=${id}`);
     return result.data;
   }
 
   const createAppointment = async ({ fullName, doctor, date, complains }) => {
-    await axios.post(`http://${process.env.REACT_APP_BASE_URL}/addAppointment`, {
+    await axios.post(`${url}/addAppointment`, {
       fullName,
       doctor,
       date,
@@ -61,7 +62,7 @@ export const Main = ({ id, token, logout }) => {
   }
 
   const editAppointment = async (parameter) => {
-    await axios.put(`http://${process.env.REACT_APP_BASE_URL}/editAppointment`, {
+    await axios.put(`${url}/editAppointment`, {
       fullName: parameter.fullName,
       doctor: parameter.doctor,
       date: parameter.date,
@@ -81,7 +82,7 @@ export const Main = ({ id, token, logout }) => {
 
   const deleteAppointment = async () => {
     await axios.delete(
-      `http://${process.env.REACT_APP_BASE_URL}/deleteAppointment?id=${currentAppointment.id}`
+      `${url}/deleteAppointment?id=${currentAppointment.id}`
     );
 
     await getAllAppointments(id)
