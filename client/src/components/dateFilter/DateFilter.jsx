@@ -6,17 +6,13 @@ import './index.scss';
 
 export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
 
-  const [dateFrom, setDateFrom] = useState(getDate(new Date()));
-  const [dateTo, setDateTo] = useState(dateFrom);
+  const [dateFrom, setDateFrom] = useState(null);
+  const [dateTo, setDateTo] = useState(null);
 
   const sendFilterData = () => {
-    if (dateFrom &&
-      dateTo &&
-      dateFrom <= dateTo) {
-      setDatesPeriod({ dateFrom, dateTo });
-    } else if (!dateFrom || !dateTo) {
-      showWarning('Заполните все поля фильтрации приемов по дате');
-    } else if (dateFrom > dateTo) {
+    setDatesPeriod({ isFilter: true, startDate: dateFrom, endDate: dateTo });
+
+    if (dateFrom > dateTo) {
       showWarning('Убедитесь в правильности введенных дат');
     }
   }
@@ -31,7 +27,6 @@ export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
           className='date-filter__field base-input'
           type='date'
           name='date-from'
-          value={dateFrom}
           InputLabelProps={{
             shrink: true,
           }}
@@ -50,7 +45,6 @@ export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
           className='date-filter__field base-input'
           type='date'
           name='date-to'
-          value={dateTo}
           InputLabelProps={{
             shrink: true,
           }}
