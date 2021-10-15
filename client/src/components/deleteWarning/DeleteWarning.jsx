@@ -2,7 +2,7 @@ import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import './index.scss';
 
-export const DeleteWarning = ({text, openWarning, cancelAction, confirmAction, }) => {
+export const DeleteWarning = ({ text, openWarning, cancelAction, confirmAction }) => {
   return (
     <Dialog open={openWarning} className='delete-warning'>
       <DialogTitle>Удалить прием</DialogTitle>
@@ -19,7 +19,7 @@ export const DeleteWarning = ({text, openWarning, cancelAction, confirmAction, }
           Cancel
         </button>
         <button
-        className='btn-styled btn-border-2 btn-light-blue '
+        className='btn-styled btn-border-2 btn-light-blue'
         onClick={confirmAction}
         >
           Delete

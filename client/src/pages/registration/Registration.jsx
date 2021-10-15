@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import { Header } from '../../components/header/Header';
 import DomainOutlined from '@material-ui/icons/DomainOutlined';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
+import { warningMessages } from '../../utils/collections';
 import axios from 'axios';
+
+const checkLength = /[A-Za-z\d]{6,20}/;
+const checkLang = /^[A-Za-z\d]+$/;
+const checkContent = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]/;
 
 export const Registration = ({ onRegister }) => {
   const [loading, setLoading] = useState(false);
@@ -14,35 +19,21 @@ export const Registration = ({ onRegister }) => {
     passwordRepeat: ''
   });
 
-  const checkLength = /[A-Za-z\d]{6,20}/;
-  const checkLang = /^[A-Za-z\d]+$/;
-  const checkContent = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]/;
-
   const isLoginValid = () => {
-    if (!formData.login || !checkLength.test(formData.login)) {
-      return false;
-    }
-
-    return true;
+    const check = !formData.login || !checkLength.test(formData.login);
+    return !check;
   }
 
   const isPasswordValid = () => {
-    if (!checkContent.test(formData.password)
-      || !checkLength.test(formData.password)
-      || !checkLang.test(formData.password)) {
-
-      return false;
-    }
-    return true;
+    const check = !checkContent.test(formData.password)
+    || !checkLength.test(formData.password)
+    || !checkLang.test(formData.password);
+    return !check;
   }
 
   const isPasswordRepMatch = () => {
-    if (!formData.passwordRepeat
-      || formData.passwordRepeat !== formData.password) {
-
-      return false;
-    }
-    return true;
+    const check = !formData.passwordRepeat || formData.passwordRepeat !== formData.password;
+    return !check;
   }
 
   const clearState = (name) => {
@@ -62,13 +53,11 @@ export const Registration = ({ onRegister }) => {
     try {
       setWarnText('');
 
-      if (!formData.login
-        || !formData.password
-        || !formData.passwordRepeat) {
-        setWarnText('Заполните все поля');
+      if (!formData.login || !formData.password || !formData.passwordRepeat) {
+        setWarnText(warningMessages.emptyField);
       } else if (!isPasswordRepMatch()) {
         setFormData({ ...formData, password: '', passwordRepeat: '' });
-        setWarnText('Пароли не совпадают');
+        setWarnText(warningMessages.passwordRepeat);
       } else {
         setLoading(true);
         await axios.post(`http://${process.env.REACT_APP_BASE_URL}/registration`, body)
@@ -86,10 +75,10 @@ export const Registration = ({ onRegister }) => {
       setLoading(false);
       if (!isLoginValid()) {
         clearState('login');
-        setWarnText('Длина логина - 6-20 символов.');
+        setWarnText(warningMessages.loginLength);
       } else if (!isPasswordValid()) {
         setFormData({ ...formData, password: '', passwordRepeat: '' });
-        setWarnText('Пароль может состоять только из латинских букв и обязательно должен включать в себя 1 букву и 1 цифру. Длина пароля - 6-20 символов');
+        setWarnText(warningMessages.passwordCheck);
       }
     }
   }
@@ -118,10 +107,7 @@ export const Registration = ({ onRegister }) => {
           <div className='warning-field'>
             {warnText &&
               <>
-                <ErrorOutline
-                  className='warning-icon'
-                  style={{ fontSize: 18, color: 'red' }}
-                />
+                <ErrorOutline className='warning-icon' />
                 {warnText}
               </>
             }

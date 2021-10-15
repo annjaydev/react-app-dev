@@ -16,12 +16,12 @@ import { sortBy } from 'lodash';
 import axios from 'axios';
 import './index.scss';
 
-export const Main = ({ id, token, logout }) => {
+const sortDirectionColl = [
+  { id: '2ci1', key: 'asc', value: 'По возрастанию' },
+  { id: '2ci2', key: 'desc', value: 'По убыванию' }
+];
 
-  const sortDirectionColl = [
-    { id: '2ci1', key: 'asc', value: 'По возрастанию' },
-    { id: '2ci2', key: 'desc', value: 'По убыванию' }
-  ];
+export const Main = ({ id, token, logout }) => {
 
   const [appointments, setAppointments] = useState([]);
   const [appointmentsCopy, setAppointmentsCopy] = useState([]);

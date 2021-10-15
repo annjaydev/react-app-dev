@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import { getDate } from '../../utils/date.formates';
+import { warningMessages } from '../../utils/collections';
 import './index.scss';
 
 export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
@@ -10,10 +10,10 @@ export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
   const [dateTo, setDateTo] = useState(null);
 
   const sendFilterData = () => {
-    setDatesPeriod({ isFilter: true, startDate: dateFrom, endDate: dateTo });
-
     if (dateFrom > dateTo) {
-      showWarning('Убедитесь в правильности введенных дат');
+      showWarning(warningMessages.wrongDates);
+    } else {
+      setDatesPeriod({ isFilter: true, startDate: dateFrom, endDate: dateTo });
     }
   }
 
@@ -32,6 +32,9 @@ export const DateFilter = ({ deleteFilter, setDatesPeriod, showWarning }) => {
           }}
           InputProps={{
             disableUnderline: true
+          }}
+          inputProps={{
+            max: dateTo
           }}
           onChange={(e) => setDateFrom(e.target.value)}
         />

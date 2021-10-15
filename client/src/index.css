@@ -46,6 +46,8 @@ code {
 
 .auth-page__img {
   padding: 25px 0;
+
+  font-size: 450px !important;
 }
 
 .auth-page__form {
@@ -119,6 +121,8 @@ label {
 
 .warning-icon {
   margin-right: 7px;
+  font-size: 18px !important;
+  color: red !important;
 }
 
 .btn-styled {
